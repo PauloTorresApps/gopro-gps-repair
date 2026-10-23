@@ -133,6 +133,14 @@ func Write(tr *telemetry.Track, res *reconstruct.Result, out string, opt Options
 	if cerr := f.Close(); err == nil {
 		err = cerr
 	}
+	// Garantia: fora dos campos de GPS regravados, o arquivo novo tem que ser
+	// idêntico ao original. Se não for, ele é descartado.
+	if err == nil {
+		err = VerifyOnlyPatched(tr.Path, out, sum.Patches)
+	}
+	if err == nil {
+		err = copyFileInfo(tr.Path, out)
+	}
 	if err != nil {
 		os.Remove(out)
 		return nil, err

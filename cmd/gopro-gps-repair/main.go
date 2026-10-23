@@ -178,6 +178,7 @@ func cmdRepair(args []string) error {
 	}
 	fmt.Printf("Regravados: %d blocos, %d bytes; fix ajustado em %d, DOP em %d, horário em %d\n",
 		sum.Blocks, sum.BytesWritten, sum.FixRaised, sum.DOPChanged, sum.TimesRewritten)
+	fmt.Println("Verificado: fora dos campos de GPS, idêntico ao original (bytes, data de modificação e permissões)")
 	if sum.FixMissing > 0 {
 		fmt.Printf("Atenção: %d blocos sem campo de fix gravado não puderam ser marcados como 3D\n", sum.FixMissing)
 	}
