@@ -5,12 +5,15 @@
 package writer
 
 import (
+	"encoding/binary"
 	"fmt"
 	"io"
 	"math"
 	"os"
+	"time"
 
 	"gopro-gps-repair/internal/gpmf"
+	"gopro-gps-repair/internal/mp4"
 	"gopro-gps-repair/internal/reconstruct"
 	"gopro-gps-repair/internal/telemetry"
 )
@@ -23,7 +26,14 @@ type Options struct {
 	DOPEstimated float64
 	// FixTimes regrava o GPSU dos blocos com horário inconsistente.
 	FixTimes bool
+	// KeepDate mantém no arquivo novo a data de modificação do original e as
+	// datas de criação do contêiner MP4. Por padrão o arquivo recebe a data e a
+	// hora atuais, para a nuvem da GoPro não o tomar por duplicata do original.
+	KeepDate bool
 }
+
+// mp4Epoch é a origem das datas do contêiner MP4 (1904-01-01 UTC).
+var mp4Epoch = time.Date(1904, 1, 1, 0, 0, 0, 0, time.UTC)
 
 // Patch é um trecho do arquivo que foi sobrescrito.
 type Patch struct {
@@ -40,6 +50,8 @@ type Summary struct {
 	FixMissing     int     `json:"blocos_sem_campo_fix"`
 	DOPChanged     int     `json:"blocos_com_dop_ajustado"`
 	TimesRewritten int     `json:"horarios_regravados"`
+	ContainerDates int     `json:"datas_do_conteiner_regravadas"`
+	Created        string  `json:"data_de_criacao,omitempty"`
 	BytesWritten   int     `json:"bytes_regravados"`
 }
 
@@ -53,6 +65,7 @@ func Write(tr *telemetry.Track, res *reconstruct.Result, out string, opt Options
 		return nil, err
 	}
 	sum := &Summary{}
+	now := time.Now().UTC().Truncate(time.Second)
 	put := func(fd *telemetry.Field, key string, data []byte) error {
 		if len(data) != fd.Len {
 			return fmt.Errorf("%s: tamanho %d diferente do original %d", key, len(data), fd.Len)
@@ -128,6 +141,11 @@ func Write(tr *telemetry.Track, res *reconstruct.Result, out string, opt Options
 				}
 			}
 		}
+		if !opt.KeepDate {
+			if err := putContainerDates(f, tr.Path, now, sum); err != nil {
+				return err
+			}
+		}
 		return f.Sync()
 	}()
 	if cerr := f.Close(); err == nil {
@@ -139,13 +157,46 @@ func Write(tr *telemetry.Track, res *reconstruct.Result, out string, opt Options
 		err = VerifyOnlyPatched(tr.Path, out, sum.Patches)
 	}
 	if err == nil {
-		err = copyFileInfo(tr.Path, out)
+		err = copyFileInfo(tr.Path, out, opt.KeepDate, now)
+		if err == nil && !opt.KeepDate {
+			sum.Created = now.Format(time.RFC3339)
+		}
 	}
 	if err != nil {
 		os.Remove(out)
 		return nil, err
 	}
 	return sum, nil
+}
+
+// putContainerDates grava a data atual como criação e modificação do contêiner
+// (mvhd, tkhd, mdhd). Os campos têm tamanho fixo e entram na lista de trechos
+// que a verificação aceita; nenhum metadado da GoPro é tocado.
+func putContainerDates(f *os.File, src string, now time.Time, sum *Summary) error {
+	fields, err := mp4.TimeFields(src)
+	if err != nil {
+		return err
+	}
+	secs := uint64(now.Sub(mp4Epoch) / time.Second)
+	for _, tf := range fields {
+		buf := make([]byte, tf.Len)
+		if tf.Wide {
+			for i := 0; i < 2; i++ {
+				binary.BigEndian.PutUint64(buf[i*8:], secs)
+			}
+		} else {
+			for i := 0; i < 2; i++ {
+				binary.BigEndian.PutUint32(buf[i*4:], uint32(secs))
+			}
+		}
+		if _, err := f.WriteAt(buf, tf.Off); err != nil {
+			return err
+		}
+		sum.Patches = append(sum.Patches, Patch{tf.Off, tf.Len, "datas"})
+		sum.BytesWritten += tf.Len
+		sum.ContainerDates++
+	}
+	return nil
 }
 
 func putInt(put func(*telemetry.Field, string, []byte) error, fd *telemetry.Field, key string, v int64) error {

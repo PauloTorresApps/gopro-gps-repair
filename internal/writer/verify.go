@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"sort"
+	"time"
 )
 
 // VerifyOnlyPatched compara orig e out byte a byte e falha se houver qualquer
@@ -71,10 +72,10 @@ func VerifyOnlyPatched(orig, out string, patches []Patch) error {
 	}
 }
 
-// copyFileInfo dá ao arquivo novo as permissões e a data de modificação do
-// original: editores de vídeo e sincronizadores usam essa data para ordenar
-// e agrupar clipes.
-func copyFileInfo(orig, out string) error {
+// copyFileInfo dá ao arquivo novo as permissões do original. A data de
+// modificação é a do original só se keepDate; senão é now, para que a nuvem da
+// GoPro (e sincronizadores) vejam um arquivo novo, não uma duplicata.
+func copyFileInfo(orig, out string, keepDate bool, now time.Time) error {
 	st, err := os.Stat(orig)
 	if err != nil {
 		return err
@@ -82,5 +83,8 @@ func copyFileInfo(orig, out string) error {
 	if err := os.Chmod(out, st.Mode().Perm()); err != nil {
 		return err
 	}
-	return os.Chtimes(out, st.ModTime(), st.ModTime())
+	if keepDate {
+		return os.Chtimes(out, st.ModTime(), st.ModTime())
+	}
+	return os.Chtimes(out, now, now)
 }

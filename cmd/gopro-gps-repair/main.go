@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"gopro-gps-repair/internal/diagnose"
 	"gopro-gps-repair/internal/gpx"
@@ -101,13 +102,18 @@ func cmdRepair(args []string) error {
 	dop := fs.Float64("dop", 2.0, "DOP declarado nos blocos com medição corrigida")
 	dopEst := fs.Float64("dop-estimado", 4.0, "DOP declarado nos blocos majoritariamente estimados")
 	keepTimes := fs.Bool("manter-horarios", false, "não regrava o GPSU de blocos com horário inconsistente")
+	keepDate := fs.Bool("manter-data", false, "mantém a data do original (por padrão o arquivo novo recebe nome e data de criação novos)")
 	file, err := parseArgs(fs, args)
 	if err != nil {
 		return err
 	}
 	if *out == "" {
 		ext := filepath.Ext(file)
-		*out = strings.TrimSuffix(file, ext) + "_gps_corrigido" + ext
+		suffix := "_gps_corrigido"
+		if !*keepDate {
+			suffix += "_" + time.Now().Format("20060102_150405")
+		}
+		*out = strings.TrimSuffix(file, ext) + suffix + ext
 	}
 	if same(file, *out) {
 		return errors.New("a saída não pode ser o próprio arquivo de entrada")
@@ -129,7 +135,7 @@ func cmdRepair(args []string) error {
 		return err
 	}
 	sum, err := writer.Write(tr, res, *out, writer.Options{
-		DOPCorrected: *dop, DOPEstimated: *dopEst, FixTimes: !*keepTimes,
+		DOPCorrected: *dop, DOPEstimated: *dopEst, FixTimes: !*keepTimes, KeepDate: *keepDate,
 	})
 	if err != nil {
 		return err
@@ -178,7 +184,11 @@ func cmdRepair(args []string) error {
 	}
 	fmt.Printf("Regravados: %d blocos, %d bytes; fix ajustado em %d, DOP em %d, horário em %d\n",
 		sum.Blocks, sum.BytesWritten, sum.FixRaised, sum.DOPChanged, sum.TimesRewritten)
-	fmt.Println("Verificado: fora dos campos de GPS, idêntico ao original (bytes, data de modificação e permissões)")
+	if *keepDate {
+		fmt.Println("Verificado: fora dos campos de GPS, idêntico ao original (bytes, data de modificação e permissões)")
+	} else {
+		fmt.Printf("Verificado: fora dos campos de GPS e das datas, idêntico ao original (metadados GoPro intactos)\nNovo nome e data de criação: %s\n", sum.Created)
+	}
 	if sum.FixMissing > 0 {
 		fmt.Printf("Atenção: %d blocos sem campo de fix gravado não puderam ser marcados como 3D\n", sum.FixMissing)
 	}

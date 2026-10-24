@@ -96,6 +96,7 @@ Opções do `reparar`:
 | `-dop` | `2.0` | DOP declarado nos blocos com medição corrigida |
 | `-dop-estimado` | `4.0` | DOP declarado nos blocos majoritariamente estimados |
 | `-manter-horarios` | não | não regrava o GPSU de blocos com horário inconsistente |
+| `-manter-data` | não | mantém a data do original; sem ela o nome de saída ganha data/hora (`_gps_corrigido_AAAAMMDD_HHMMSS`) e o arquivo recebe data de criação nova |
 
 As opções podem vir antes ou depois do nome do vídeo.
 
@@ -184,17 +185,22 @@ cada ponto vai no `<desc>` (por exemplo, `posição corrigido, altitude estimado
    metadados ficam idênticos ao original.
 5. **Verificação**: o arquivo novo é comparado byte a byte com o original. Se
    qualquer byte fora dos campos de GPS tiver mudado, ou o tamanho for outro, o
-   arquivo novo é apagado e o reparo falha. Ele também recebe a data de
-   modificação e as permissões do original.
+   arquivo novo é apagado e o reparo falha. O arquivo novo recebe um **nome e
+   uma data/hora de criação novos** (data de modificação do arquivo e datas
+   `mvhd`/`tkhd`/`mdhd` do contêiner MP4), para a nuvem da GoPro não o tomar por
+   duplicata do original; as permissões são as do original. Com
+   `-manter-data` a data de modificação do original é mantida.
 
 ### Metadados preservados
 
-Os metadados da GoPro ou de qualquer outra fonte (datas de criação, firmware,
+Os metadados da GoPro ou de qualquer outra fonte (firmware,
 número de série da câmera, timecode, configurações de gravação, acelerômetro,
 giroscópio, metadados adicionados por outros programas etc.) ficam **idênticos**
 ao original. Só mudam os campos de GPS: `GPS5` (posição, altitude e
 velocidades), `GPSF` (fix), `GPSP` (DOP) e, nos blocos com horário
-inconsistente, `GPSU` (desligável com `-manter-horarios`).
+inconsistente, `GPSU` (desligável com `-manter-horarios`). As únicas outras
+mudanças são o nome do arquivo e as datas de criação/modificação do contêiner
+(desligáveis com `-manter-data`).
 
 Cada ponto do relatório é marcado como `corrigido` (havia medição) ou
 `estimado` (não havia), com a incerteza em metros.
@@ -314,6 +320,7 @@ make reparar VIDEO=~/Downloads/GH019736.MP4 ARGS="-gpx track.gpx"
 | `-dop` | `2.0` | DOP declared in blocks with corrected measurements |
 | `-dop-estimado` | `4.0` | DOP declared in mostly estimated blocks |
 | `-manter-horarios` | no | does not rewrite the GPSU of blocks with inconsistent time |
+| `-manter-data` | no | keeps the original's date; without it the output name gets a timestamp (`_gps_corrigido_YYYYMMDD_HHMMSS`) and the file gets a new creation date |
 
 Options can come before or after the video name.
 
@@ -403,17 +410,21 @@ estimado`, meaning corrected position, estimated altitude).
    metadata stay identical to the original.
 5. **Verification**: the new file is compared byte by byte with the original.
    If any byte outside the GPS fields has changed, or the size differs, the new
-   file is deleted and the repair fails. It also receives the original's
-   modification time and permissions.
+   file is deleted and the repair fails. The new file gets a **new name and
+   creation date/time** (file modification time and the container's
+   `mvhd`/`tkhd`/`mdhd` dates), so GoPro's cloud does not take it for a
+   duplicate of the original; permissions are the original's. With
+   `-manter-data` the original's modification time is kept.
 
 ### Preserved metadata
 
-Metadata from GoPro or any other source (creation dates, firmware, camera
+Metadata from GoPro or any other source (firmware, camera
 serial number, timecode, recording settings, accelerometer, gyroscope, metadata
 added by other software, etc.) stays **identical** to the original. Only the
 GPS fields change: `GPS5` (position, altitude and speeds), `GPSF` (fix),
 `GPSP` (DOP) and, in blocks with inconsistent time, `GPSU` (can be disabled
-with `-manter-horarios`).
+with `-manter-horarios`). The only other changes are the file name and the
+container's creation/modification dates (can be disabled with `-manter-data`).
 
 Each point in the report is marked as `corrigido` (corrected: there was a
 measurement) or `estimado` (estimated: there was none), with the uncertainty in

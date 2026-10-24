@@ -279,3 +279,85 @@ func be32(b []byte, off int) uint32 {
 	}
 	return binary.BigEndian.Uint32(b[off:])
 }
+
+// TimeField é o par criação+modificação de um box mvhd, tkhd ou mdhd: os dois
+// valores são contíguos e têm tamanho fixo (8 bytes na versão 0, 16 na 1).
+type TimeField struct {
+	Off  int64
+	Len  int
+	Wide bool // versão 1: valores de 64 bits
+}
+
+// TimeFields localiza as datas de criação/modificação do contêiner (mvhd e,
+// de cada trilha, tkhd e mdhd). Não inclui nenhum metadado da GoPro.
+func TimeFields(path string) ([]TimeField, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	st, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	top, err := readBoxes(f, 0, st.Size())
+	if err != nil {
+		return nil, err
+	}
+	moov, ok := child(top, "moov")
+	if !ok {
+		return nil, fmt.Errorf("arquivo sem box moov (não é um MP4 válido?)")
+	}
+
+	var out []TimeField
+	add := func(b box) error {
+		var v [1]byte
+		if _, err := f.ReadAt(v[:], b.data); err != nil {
+			return fmt.Errorf("lendo %s: %w", b.typ, err)
+		}
+		tf := TimeField{Off: b.data + 4, Len: 8}
+		if v[0] == 1 {
+			tf.Len, tf.Wide = 16, true
+		}
+		if tf.Off+int64(tf.Len) > b.end {
+			return fmt.Errorf("box %s curto demais", b.typ)
+		}
+		out = append(out, tf)
+		return nil
+	}
+
+	kids, err := readBoxes(f, moov.data, moov.end)
+	if err != nil {
+		return nil, err
+	}
+	for _, k := range kids {
+		switch k.typ {
+		case "mvhd":
+			if err := add(k); err != nil {
+				return nil, err
+			}
+		case "trak":
+			tk, err := readBoxes(f, k.data, k.end)
+			if err != nil {
+				return nil, err
+			}
+			if b, ok := child(tk, "tkhd"); ok {
+				if err := add(b); err != nil {
+					return nil, err
+				}
+			}
+			if mdia, ok := child(tk, "mdia"); ok {
+				mk, err := readBoxes(f, mdia.data, mdia.end)
+				if err != nil {
+					return nil, err
+				}
+				if b, ok := child(mk, "mdhd"); ok {
+					if err := add(b); err != nil {
+						return nil, err
+					}
+				}
+			}
+		}
+	}
+	return out, nil
+}

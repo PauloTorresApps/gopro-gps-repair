@@ -31,5 +31,10 @@ Use os alvos do `Makefile`:
   reescrita de boxes do MP4 ou mudança de tamanho. A verificação byte a byte
   (`writer.VerifyOnlyPatched`) e a cópia de data/permissões
   (`copyFileInfo`) não podem ser removidas nem contornadas.
+- **Nome e data novos:** a única exceção são o nome do arquivo e as datas de
+  criação/modificação (arquivo e `mvhd`/`tkhd`/`mdhd`), que ficam novos por
+  padrão para a nuvem da GoPro não ver o reparo como duplicata. Essas datas
+  entram na lista de trechos aceitos pela verificação; `-manter-data` as
+  preserva.
 - Valores reconstruídos são sempre marcados como `corrigido` ou `estimado` no
   relatório. Não declarar no arquivo uma precisão melhor do que a opção pedida.
