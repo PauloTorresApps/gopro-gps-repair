@@ -14,6 +14,10 @@ Ele recupera vídeos cujo GPS foi gravado mal ou ficou degradado, para que a
 telemetria (mapa, velocidade, altitude) possa ser adicionada ao vídeo pelo app
 **Quik da GoPro**. O vídeo reparado mantém os metadados originais da GoPro.
 
+A matemática usada (filtro de Kalman, suavizador RTS, rejeição de saltos etc.)
+está descrita em [docs/tecnicas-matematicas.md](docs/tecnicas-matematicas.md)
+(em português).
+
 ## Uso
 
 ### Pré-requisitos
@@ -241,6 +245,10 @@ a **new** MP4 with the reconstructed GPS.
 It recovers videos whose GPS was poorly recorded or degraded, so that the
 telemetry (map, speed, altitude) can be added to the video with the **GoPro
 Quik** app. The repaired video keeps the original GoPro metadata.
+
+The mathematics used (Kalman filter, RTS smoother, jump rejection, etc.) is
+described in [docs/tecnicas-matematicas.md](docs/tecnicas-matematicas.md)
+(in Portuguese).
 
 ## Usage
 
