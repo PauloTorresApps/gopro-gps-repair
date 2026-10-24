@@ -10,6 +10,10 @@ o GPS estabilizar, ou grava com poucos satélites, a trilha fica com trechos sem
 fix, fix só 2D, precisão ruim (DOP alto), saltos de posição e altitude oscilando.
 Este programa mede esses defeitos e gera um **novo** MP4 com o GPS reconstruído.
 
+Ele recupera vídeos cujo GPS foi gravado mal ou ficou degradado, para que a
+telemetria (mapa, velocidade, altitude) possa ser adicionada ao vídeo pelo app
+**Quik da GoPro**. O vídeo reparado mantém os metadados originais da GoPro.
+
 ## Uso
 
 ### Pré-requisitos
@@ -233,6 +237,10 @@ before the GPS has settled, or records with few satellites, the track ends up
 with stretches without a fix, 2D-only fix, poor precision (high DOP), position
 jumps and oscillating altitude. This program measures these defects and creates
 a **new** MP4 with the reconstructed GPS.
+
+It recovers videos whose GPS was poorly recorded or degraded, so that the
+telemetry (map, speed, altitude) can be added to the video with the **GoPro
+Quik** app. The repaired video keeps the original GoPro metadata.
 
 ## Usage
 
