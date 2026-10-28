@@ -10,7 +10,7 @@
 #
 # No repositório do Flathub, troque a fonte "dir" abaixo por:
 #   - type: git
-#     url: https://github.com/PauloTorresApps/gopro-gps-repair.git
+#     url: https://github.com/PauloTorresApps/gopro_gps_repair.git
 #     tag: v<versão>
 #     commit: <hash do commit da tag>
 

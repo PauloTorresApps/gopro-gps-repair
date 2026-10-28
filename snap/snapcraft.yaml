@@ -28,10 +28,10 @@ description: |
   To open videos on memory cards and external drives, connect the
   removable-media interface: snap connect gopro-gps-repair:removable-media
 license: Apache-2.0
-contact: https://github.com/PauloTorresApps/gopro-gps-repair/issues
-issues: https://github.com/PauloTorresApps/gopro-gps-repair/issues
-source-code: https://github.com/PauloTorresApps/gopro-gps-repair
-website: https://github.com/PauloTorresApps/gopro-gps-repair
+contact: https://github.com/PauloTorresApps/gopro_gps_repair/issues
+issues: https://github.com/PauloTorresApps/gopro_gps_repair/issues
+source-code: https://github.com/PauloTorresApps/gopro_gps_repair
+website: https://github.com/PauloTorresApps/gopro_gps_repair
 icon: gui/build/linux/share/icons/512x512/io.github.PauloTorresApps.gopro_gps_repair.png
 
 base: core24
