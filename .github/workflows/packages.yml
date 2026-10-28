@@ -4,12 +4,17 @@
 #   make conferir-versao TAG=v0.3.0     # metainfo e AUR já com 0.3.0?
 #   git tag v0.3.0 && git push origin v0.3.0
 #
-# Também pode ser disparado à mão (aba Actions), só para gerar os artefatos.
+# Também roda em pull requests para a main e pode ser disparado à mão (aba
+# Actions, depois que este arquivo estiver na main), só para gerar os artefatos.
 name: Pacotes
 
 on:
   push:
     tags: ['v*']
+  # Pull requests para a main: gera todos os pacotes (sem Release) para
+  # testar o build antes do merge.
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
