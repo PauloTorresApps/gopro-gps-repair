@@ -93,12 +93,13 @@
   <releases>
     <release version="0.2.0" date="2026-10-28">
       <description>
-        <p>The app version is now shown in the window header and by the command-line tool (gopro-gps-repair versao).</p>
-      </description>
-    </release>
-    <release version="0.1.0" date="2026-10-28">
-      <description>
-        <p>First release with a graphical interface: GPS assessment, confirmation, restoration with abort and a detailed report.</p>
+        <p>First release with a graphical interface:</p>
+        <ul>
+          <li>GPS assessment with a score, quality along the video and problem spans</li>
+          <li>Confirmation before restoring, and abort at any time</li>
+          <li>Detailed report of what was restored and how</li>
+          <li>English, Portuguese, Spanish and Chinese</li>
+        </ul>
       </description>
     </release>
   </releases>
