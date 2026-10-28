@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 Paulo Roberto Torres -->
+<component type="desktop-application">
+  <id>io.github.PauloTorresApps.gopro_gps_repair</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Apache-2.0</project_license>
+
+  <name>GPS Repair for GoPro</name>
+  <summary>Recover degraded GPS so GoPro Quik can add telemetry gauges</summary>
+  <summary xml:lang="pt-BR">Recupere o GPS degradado para o GoPro Quik adicionar os medidores de telemetria</summary>
+  <summary xml:lang="es">Recupera el GPS degradado para que GoPro Quik pueda añadir los indicadores</summary>
+  <summary xml:lang="zh-CN">修复受损的 GPS 数据，让 GoPro Quik 能够添加遥测仪表</summary>
+
+  <developer id="io.github.paulotorresapps">
+    <name>Paulo Roberto Torres</name>
+  </developer>
+
+  <description>
+    <p>
+      On mountain bike rides or trails under tree cover, the GPS of action cameras often loses
+      signal. The telemetry recorded inside the video ends up with gaps, poor precision and
+      position jumps, and GoPro Quik refuses to add its telemetry gauges.
+    </p>
+    <p>
+      This app assesses the GPS recorded in the video, shows its real condition and, after you
+      confirm, rebuilds the track into a new video:
+    </p>
+    <ul>
+      <li>Kalman filter with RTS smoother, using position and Doppler speed</li>
+      <li>Rejection of position jumps and interpolation of gaps</li>
+      <li>Only the GPS fields change: video, audio and all other metadata stay byte-for-byte identical</li>
+      <li>Report of what was restored and how, marking each point as corrected or estimated</li>
+      <li>Available in English, Portuguese, Spanish and Chinese</li>
+    </ul>
+    <p>
+      Supports cameras that record GPS5 telemetry (HERO5 to HERO10). The original file is never
+      changed. This is an independent project, not affiliated with or endorsed by GoPro, Inc.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.PauloTorresApps.gopro_gps_repair.desktop</launchable>
+  <provides>
+    <binary>gopro-gps-repair-gui</binary>
+  </provides>
+
+  <url type="homepage">https://github.com/PauloTorresApps/gopro-gps-repair</url>
+  <url type="bugtracker">https://github.com/PauloTorresApps/gopro-gps-repair/issues</url>
+  <url type="vcs-browser">https://github.com/PauloTorresApps/gopro-gps-repair</url>
+
+  <categories>
+    <category>AudioVideo</category>
+    <category>Video</category>
+    <category>AudioVideoEditing</category>
+  </categories>
+  <keywords>
+    <keyword>GoPro</keyword>
+    <keyword>GPS</keyword>
+    <keyword>telemetry</keyword>
+    <keyword>GPMF</keyword>
+    <keyword>Quik</keyword>
+  </keywords>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>GPS assessment before restoring</caption>
+      <image>https://raw.githubusercontent.com/PauloTorresApps/gopro-gps-repair/main/docs/screenshots/assessment.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Restoration in progress, with an abort button</caption>
+      <image>https://raw.githubusercontent.com/PauloTorresApps/gopro-gps-repair/main/docs/screenshots/progress.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Report of what was restored and how</caption>
+      <image>https://raw.githubusercontent.com/PauloTorresApps/gopro-gps-repair/main/docs/screenshots/report.png</image>
+    </screenshot>
+  </screenshots>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#33b5f0</color>
+    <color type="primary" scheme_preference="dark">#111113</color>
+  </branding>
+
+  <requires>
+    <display_length compare="ge">720</display_length>
+  </requires>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+
+  <content_rating type="oars-1.1"/>
+
+  <releases>
+    <release version="0.1.0" date="2026-10-28">
+      <description>
+        <p>First release with a graphical interface: GPS assessment, confirmation, restoration with abort and a detailed report.</p>
+      </description>
+    </release>
+  </releases>
+</component>

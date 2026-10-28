@@ -154,7 +154,7 @@ function Header() {
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink-800 text-sky-brand">{Icon.pin}</div>
         <div className="min-w-0 flex-1">
           <h1 className="text-lg font-bold tracking-tight">
-            GoPro <span className="text-sky-brand">GPS</span> Repair
+            <span className="text-sky-brand">GPS</span> Repair <span className="font-medium text-ink-300">for GoPro</span>
           </h1>
           <p className="truncate text-xs text-ink-400">{t("app.tagline")}</p>
         </div>
@@ -166,7 +166,7 @@ function Header() {
             className="rounded-lg border border-ink-700 bg-ink-850 px-2.5 py-1.5 text-sm text-ink-100 focus:border-sky-brand focus:outline-none"
           >
             {languages.map((l) => (
-              <option key={l.code} value={l.code}>
+              <option key={l.code} value={l.code} className="bg-white text-ink-950">
                 {l.label}
               </option>
             ))}

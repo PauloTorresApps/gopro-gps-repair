@@ -40,11 +40,23 @@ type RepairService struct {
 	cancel context.CancelFunc
 }
 
+// ServiceStartup roda dentro de app.Run, depois de o Wails criar a aplicação
+// GTK e antes de registrá-la: é o momento de ajustar o ID no Linux.
+func (s *RepairService) ServiceStartup(context.Context, application.ServiceOptions) error {
+	setLinuxAppID()
+	return nil
+}
+
 // OutputDir devolve (e cria, se preciso) a pasta de saída: ~/gopro-gps-repair.
 func (s *RepairService) OutputDir() (string, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
+	// No Snap, HOME aponta para ~/snap/<app>/<revisão>; o diretório pessoal
+	// de verdade vem em SNAP_REAL_HOME.
+	home := os.Getenv("SNAP_REAL_HOME")
+	if home == "" {
+		var err error
+		if home, err = os.UserHomeDir(); err != nil {
+			return "", err
+		}
 	}
 	dir := filepath.Join(home, OutputDirName)
 	if err := os.MkdirAll(dir, 0o755); err != nil {

@@ -265,12 +265,71 @@ programas de edição aceitem a trilha. Os valores são reconstruídos, não
 medidos: guarde o original e o relatório JSON. A nota "depois" do `reparar`
 reflete o que o arquivo declara, não uma nova medição.
 
+## Pacotes e lojas
+
+Nas lojas, o app aparece como **GPS Repair for GoPro** (projeto independente,
+sem vínculo com a GoPro, Inc.). Todos os pacotes trazem a interface
+(`gopro-gps-repair-gui`) e a linha de comando (`gopro-gps-repair`).
+
+| distribuição | formato | onde fica |
+|---|---|---|
+| Ubuntu 24.04+, Debian 13+ e derivados | `.deb` | `make pacotes` → `gui/bin/` |
+| Fedora, RHEL 10 e derivados | `.rpm` | `make pacotes` → `gui/bin/` |
+| Arch, Manjaro, EndeavourOS... | `.pkg.tar.zst` e AUR | `make pacotes`; `packaging/aur/PKGBUILD` |
+| qualquer distro | AppImage | `make pacotes` → `gui/bin/` |
+| Flathub (GNOME Software, KDE Discover; Fedora, Mint, Pop!_OS...) | Flatpak | `packaging/flatpak/` (`make flatpak`) |
+| Snap Store (App Center do Ubuntu) | Snap | `snap/snapcraft.yaml` |
+
+`make pacotes VERSION=0.2.0` gera os quatro primeiros. O identificador do app
+(AppStream, `.desktop`, Flatpak) é `io.github.PauloTorresApps.gopro_gps_repair`;
+os metadados das lojas ficam em `gui/build/linux/share/`.
+
+**Publicar uma versão.** O workflow `.github/workflows/packages.yml` gera todos
+os pacotes (Linux, Flatpak, Snap, Windows e macOS) e cria uma Release em
+rascunho no GitHub quando uma tag `vX.Y.Z` é enviada. Antes, atualize a versão
+em `gui/Taskfile.yml`, `gui/build/config.yml`, no `<releases>` do metainfo, em
+`snap/snapcraft.yaml` e no `packaging/aur/PKGBUILD`.
+
+- **Flathub:** o Flathub compila sem internet; as dependências Go e npm ficam
+  listadas em `packaging/flatpak/go-sources.json` e `npm-sources.json`. Depois de
+  mudar `gui/go.mod` ou `package-lock.json`, rode `make fontes-flatpak`. Para
+  enviar, siga <https://docs.flathub.org/docs/for-app-authors/submission>,
+  trocando a fonte `dir` do manifesto pela tag do GitHub (há um comentário no
+  arquivo).
+- **AUR:** depois de criar a tag, rode `updpkgsums` e
+  `makepkg --printsrcinfo > .SRCINFO` em `packaging/aur/` e envie os dois
+  arquivos ao repositório `gopro-gps-repair` do AUR.
+- **Snap Store:** registre o nome (`snapcraft register gopro-gps-repair`) e
+  envie o `.snap` gerado pelo workflow (`snapcraft upload --release=stable`).
+
+## macOS e Windows
+
+As tarefas de build do Wails para os dois sistemas já estão em
+`gui/build/darwin` e `gui/build/windows`. Em cada sistema, instale Go 1.25+,
+Node.js 22+ e a CLI do Wails
+(`go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.16`), e rode na
+pasta `gui/`:
+
+| sistema | requisitos extras | comando | resultado |
+|---|---|---|---|
+| macOS 11+ | Xcode Command Line Tools (`xcode-select --install`) | `wails3 task darwin:package:universal` | `bin/gopro-gps-repair-gui.app` (Intel e Apple Silicon) |
+| Windows 10/11 | NSIS (`winget install NSIS.NSIS`), para o instalador | `wails3 task windows:package` | instalador em `bin/` |
+
+No Windows o app usa o WebView2, que já vem no Windows 11; o instalador o
+instala no Windows 10 se faltar. O app do macOS sai sem assinatura: na primeira
+vez, abra com o botão direito → **Abrir**. Para assinar e notarizar, veja
+`wails3 task darwin:sign:notarize` e `wails3 setup signing`.
+
 ## Limitações atuais
 
 - só o formato `GPS5` (HERO5 a HERO10); o `GPS9` da HERO11+ ainda não;
 - cada arquivo é tratado isoladamente (sem juntar GH01…, GH02… da mesma gravação);
 - altitude só a partir do próprio GPS (sem modelo de terreno);
 - sem fontes externas (Strava, GPX/FIT) e sem uso do acelerômetro/giroscópio.
+
+## Licença
+
+Apache License 2.0. Veja o arquivo [LICENSE](LICENSE).
 
 ---
 
@@ -542,9 +601,68 @@ editing software accepts the track. The values are reconstructed, not
 measured: keep the original and the JSON report. The "after" score shown by
 `reparar` reflects what the file declares, not a new measurement.
 
+## Packages and stores
+
+In the stores, the app is listed as **GPS Repair for GoPro** (an independent
+project, not affiliated with GoPro, Inc.). Every package ships both the
+graphical app (`gopro-gps-repair-gui`) and the command line
+(`gopro-gps-repair`).
+
+| distribution | format | where |
+|---|---|---|
+| Ubuntu 24.04+, Debian 13+ and derivatives | `.deb` | `make pacotes` → `gui/bin/` |
+| Fedora, RHEL 10 and derivatives | `.rpm` | `make pacotes` → `gui/bin/` |
+| Arch, Manjaro, EndeavourOS... | `.pkg.tar.zst` and AUR | `make pacotes`; `packaging/aur/PKGBUILD` |
+| any distro | AppImage | `make pacotes` → `gui/bin/` |
+| Flathub (GNOME Software, KDE Discover; Fedora, Mint, Pop!_OS...) | Flatpak | `packaging/flatpak/` (`make flatpak`) |
+| Snap Store (Ubuntu App Center) | Snap | `snap/snapcraft.yaml` |
+
+`make pacotes VERSION=0.2.0` builds the first four. The app ID (AppStream,
+`.desktop`, Flatpak) is `io.github.PauloTorresApps.gopro_gps_repair`; the store
+metadata lives in `gui/build/linux/share/`.
+
+**Publishing a release.** The `.github/workflows/packages.yml` workflow builds
+every package (Linux, Flatpak, Snap, Windows and macOS) and creates a draft
+GitHub Release when a `vX.Y.Z` tag is pushed. Before that, update the version in
+`gui/Taskfile.yml`, `gui/build/config.yml`, the metainfo `<releases>`,
+`snap/snapcraft.yaml` and `packaging/aur/PKGBUILD`.
+
+- **Flathub:** Flathub builds without internet access; the Go and npm
+  dependencies are listed in `packaging/flatpak/go-sources.json` and
+  `npm-sources.json`. After changing `gui/go.mod` or `package-lock.json`, run
+  `make fontes-flatpak`. To submit, follow
+  <https://docs.flathub.org/docs/for-app-authors/submission>, replacing the
+  manifest's `dir` source with the GitHub tag (there is a comment in the file).
+- **AUR:** after tagging, run `updpkgsums` and `makepkg --printsrcinfo > .SRCINFO`
+  in `packaging/aur/` and push both files to the AUR `gopro-gps-repair`
+  repository.
+- **Snap Store:** register the name (`snapcraft register gopro-gps-repair`) and
+  upload the `.snap` built by the workflow (`snapcraft upload --release=stable`).
+
+## macOS and Windows
+
+The Wails build tasks for both systems are in `gui/build/darwin` and
+`gui/build/windows`. On each system, install Go 1.25+, Node.js 22+ and the
+Wails CLI (`go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.16`),
+then run in the `gui/` folder:
+
+| system | extra requirements | command | result |
+|---|---|---|---|
+| macOS 11+ | Xcode Command Line Tools (`xcode-select --install`) | `wails3 task darwin:package:universal` | `bin/gopro-gps-repair-gui.app` (Intel and Apple Silicon) |
+| Windows 10/11 | NSIS (`winget install NSIS.NSIS`), for the installer | `wails3 task windows:package` | installer in `bin/` |
+
+On Windows the app uses WebView2, which ships with Windows 11; the installer
+adds it on Windows 10 if missing. The macOS app is unsigned: the first time,
+right-click it → **Open**. To sign and notarize, see
+`wails3 task darwin:sign:notarize` and `wails3 setup signing`.
+
 ## Current limitations
 
 - only the `GPS5` format (HERO5 to HERO10); HERO11+ `GPS9` is not supported yet;
 - each file is handled on its own (GH01…, GH02… of the same recording are not joined);
 - altitude comes only from the GPS itself (no terrain model);
 - no external sources (Strava, GPX/FIT) and no use of the accelerometer/gyroscope.
+
+## License
+
+Apache License 2.0. See the [LICENSE](LICENSE) file.

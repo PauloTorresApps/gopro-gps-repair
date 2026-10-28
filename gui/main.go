@@ -17,6 +17,10 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+// AppName é o nome exibido. "for GoPro" indica compatibilidade: o app não é
+// um produto oficial da GoPro.
+const AppName = "GPS Repair for GoPro"
+
 func init() {
 	application.RegisterEvent[Progress](EventProgress)
 	application.RegisterEvent[string](EventDropped)
@@ -24,7 +28,7 @@ func init() {
 
 func main() {
 	app := application.New(application.Options{
-		Name:        "GoPro GPS Repair",
+		Name:        AppName,
 		Description: "Diagnosis and recovery of GPS data in GoPro videos",
 		Services: []application.Service{
 			application.NewService(&RepairService{}),
@@ -35,10 +39,11 @@ func main() {
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
+		Linux: application.LinuxOptions{ProgramName: "gopro-gps-repair-gui"},
 	})
 
 	win := app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:            "GoPro GPS Repair",
+		Title:            AppName,
 		Width:            1040,
 		Height:           760,
 		MinWidth:         720,

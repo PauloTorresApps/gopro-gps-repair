@@ -2,6 +2,8 @@ version: '3'
 
 vars:
   APP_NAME: "gopro-gps-repair-gui"
+  # Versão dos pacotes; mantenha igual à de build/config.yml e à do metainfo.
+  VERSION: '{{.VERSION | default "0.1.0"}}'
   BIN_DIR: "bin"
   PACKAGE_MANAGER: '{{.PACKAGE_MANAGER | default "npm"}}'
   VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'

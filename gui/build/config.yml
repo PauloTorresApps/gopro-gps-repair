@@ -6,8 +6,8 @@ version: '3'
 # This information is used to generate the build assets.
 info:
   companyName: "Paulo Roberto Torres" # The name of the company
-  productName: "GoPro GPS Repair" # The name of the application
-  productIdentifier: "io.github.paulotorresapps.gopro-gps-repair" # The unique product identifier
+  productName: "GPS Repair for GoPro" # The name of the application
+  productIdentifier: "io.github.PauloTorresApps.gopro_gps_repair" # The unique product identifier
   description: "Diagnosis and recovery of GPS data in GoPro videos" # The application description
   copyright: "(c) 2026, Paulo Roberto Torres" # Copyright text
   comments: "Restores degraded GPS telemetry so GoPro Quik can add its gauges" # Comments

@@ -8,14 +8,14 @@
   IgnorableNamespaces="uap3">
   
   <Identity 
-    Name="io.github.paulotorresapps.gopro-gps-repair"
+    Name="io.github.PauloTorresApps.gopro-gps-repair"
     Publisher="CN=Paulo Roberto Torres"
     Version="0.1.0.0" 
     ProcessorArchitecture="x64" />
   
   <Properties>
-    <DisplayName>My Product</DisplayName>
-    <PublisherDisplayName>My Company</PublisherDisplayName>
+    <DisplayName>GPS Repair for GoPro</DisplayName>
+    <PublisherDisplayName>Paulo Roberto Torres</PublisherDisplayName>
     <Description>Diagnosis and recovery of GPS data in GoPro videos</Description>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -29,9 +29,9 @@
   </Resources>
   
   <Applications>
-    <Application Id="io.github.paulotorresapps.gopro-gps-repair" Executable="gopro-gps-repair-gui" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="GPSRepairForGoPro" Executable="gopro-gps-repair-gui" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        DisplayName="My Product"
+        DisplayName="GPS Repair for GoPro"
         Description="Diagnosis and recovery of GPS data in GoPro videos"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"

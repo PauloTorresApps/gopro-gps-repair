@@ -11,7 +11,7 @@
     !define INFO_COMPANYNAME "Paulo Roberto Torres"
 !endif
 !ifndef INFO_PRODUCTNAME
-    !define INFO_PRODUCTNAME "GoPro GPS Repair"
+    !define INFO_PRODUCTNAME "GPS Repair for GoPro"
 !endif
 !ifndef INFO_PRODUCTVERSION
     !define INFO_PRODUCTVERSION "0.1.0"

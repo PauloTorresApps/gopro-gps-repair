@@ -10,13 +10,13 @@
     <Installer
         Path="gopro-gps-repair-gui"
         Arguments=""
-        InstallLocation="C:\Program Files\My Company\My Product">
+        InstallLocation="C:\Program Files\Paulo Roberto Torres\GPS Repair for GoPro">
     </Installer>
     <PackageInformation
-        PackageName="My Product"
-        PackageDisplayName="My Product"
-        PublisherName="CN=My Company"
-        PublisherDisplayName="My Company"
+        PackageName="GPSRepairForGoPro"
+        PackageDisplayName="GPS Repair for GoPro"
+        PublisherName="CN=Paulo Roberto Torres"
+        PublisherDisplayName="Paulo Roberto Torres"
         Version="0.1.0.0"
         PackageDescription="Diagnosis and recovery of GPS data in GoPro videos">
         <Capabilities>
@@ -25,9 +25,9 @@
         </Capabilities>
         <Applications>
             <Application
-                Id="io.github.paulotorresapps.gopro-gps-repair"
+                Id="GPSRepairForGoPro"
                 Description="Diagnosis and recovery of GPS data in GoPro videos"
-                DisplayName="My Product"
+                DisplayName="GPS Repair for GoPro"
                 ExecutableName="gopro-gps-repair-gui"
                 EntryPoint="Windows.FullTrustApplication">
                 
@@ -41,8 +41,8 @@
         </Dependencies>
         <Properties>
             <Framework>false</Framework>
-            <DisplayName>My Product</DisplayName>
-            <PublisherDisplayName>My Company</PublisherDisplayName>
+            <DisplayName>GPS Repair for GoPro</DisplayName>
+            <PublisherDisplayName>Paulo Roberto Torres</PublisherDisplayName>
             <Description>Diagnosis and recovery of GPS data in GoPro videos</Description>
             <Logo>Assets\AppIcon.png</Logo>
         </Properties>

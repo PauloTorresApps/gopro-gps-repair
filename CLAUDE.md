@@ -18,7 +18,22 @@ Use os alvos do `Makefile`:
 - `make build`: compila em `bin/gopro-gps-repair`;
 - `make test` e `make vet`;
 - `make diagnosticar VIDEO=<arquivo>`;
-- `make reparar VIDEO=<arquivo> [ARGS="..."]`.
+- `make reparar VIDEO=<arquivo> [ARGS="..."]`;
+- `make gui` (interface), `make pacotes [VERSION=x.y.z]` (.deb, .rpm, Arch,
+  AppImage), `make flatpak` e `make fontes-flatpak`.
+
+## Empacotamento
+
+- Nome nas lojas: "GPS Repair for GoPro"; ID `io.github.PauloTorresApps.gopro_gps_repair`
+  (AppStream, `.desktop`, Flatpak e ID do GTK, definido em `gui/appid_linux.go`;
+  sem ele o app fecha dentro do Flatpak).
+- A versão aparece em `gui/Taskfile.yml`, `gui/build/config.yml`, no metainfo
+  (`gui/build/linux/share/`), em `snap/snapcraft.yaml` e em
+  `packaging/aur/PKGBUILD`: mude todas juntas.
+- Mudou `gui/go.mod` ou `gui/frontend/package-lock.json`? Rode
+  `make fontes-flatpak` (o Flathub compila sem internet).
+- As bindings em `gui/frontend/bindings` são versionadas: o AUR, o Flatpak e o
+  Snap compilam sem a CLI do Wails. Regere-as (`make gui`) ao mudar o serviço Go.
 
 ## Convenções
 

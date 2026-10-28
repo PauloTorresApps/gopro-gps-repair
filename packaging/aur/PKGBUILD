@@ -1,0 +1,63 @@
+# Maintainer: Paulo Roberto Torres <paulotorres at mpto dot mp dot br>
+#
+# Pacote do AUR, compilado a partir do código-fonte da versão marcada (tag) no
+# GitHub. Ao publicar uma versão nova: atualize pkgver, rode `updpkgsums` e
+# `makepkg --printsrcinfo > .SRCINFO`.
+
+pkgname=gopro-gps-repair
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Recover degraded GPS in GoPro videos so GoPro Quik can add telemetry gauges (GUI and CLI)'
+arch=('x86_64' 'aarch64')
+url='https://github.com/PauloTorresApps/gopro-gps-repair'
+license=('Apache-2.0')
+depends=('gtk4' 'webkitgtk-6.0' 'libsoup3' 'glib2' 'libx11' 'hicolor-icon-theme' 'glibc')
+makedepends=('go' 'npm')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+_appid=io.github.PauloTorresApps.gopro_gps_repair
+
+prepare() {
+  cd "$pkgname-$pkgver"
+  export GOPATH="$srcdir/gopath" GOFLAGS='-modcacherw'
+  go mod download
+  (cd gui && go mod download)
+  (cd gui/frontend && npm ci --no-audit --no-fund)
+}
+
+build() {
+  cd "$pkgname-$pkgver"
+  export GOPATH="$srcdir/gopath"
+  export CGO_CPPFLAGS="$CPPFLAGS" CGO_CFLAGS="$CFLAGS" CGO_CXXFLAGS="$CXXFLAGS" CGO_LDFLAGS="$LDFLAGS"
+  export GOFLAGS='-buildmode=pie -trimpath -mod=readonly -modcacherw'
+
+  # Interface: o frontend (React) é embutido no binário. As bindings em
+  # gui/frontend/bindings já vêm no código-fonte; não é preciso a CLI do Wails.
+  (cd gui/frontend && npm run build)
+  (cd gui && go build -tags production -ldflags '-linkmode=external' -o ../gopro-gps-repair-gui .)
+
+  # Linha de comando
+  go build -ldflags '-linkmode=external' -o gopro-gps-repair ./cmd/gopro-gps-repair
+}
+
+check() {
+  cd "$pkgname-$pkgver"
+  export GOPATH="$srcdir/gopath" GOFLAGS='-modcacherw'
+  go test ./...
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  local share=gui/build/linux/share
+  install -Dm755 gopro-gps-repair-gui -t "$pkgdir/usr/bin"
+  install -Dm755 gopro-gps-repair -t "$pkgdir/usr/bin"
+  install -Dm644 "$share/$_appid.desktop" -t "$pkgdir/usr/share/applications"
+  install -Dm644 "$share/$_appid.metainfo.xml" -t "$pkgdir/usr/share/metainfo"
+  install -Dm644 "$share/icons/scalable/$_appid.svg" -t "$pkgdir/usr/share/icons/hicolor/scalable/apps"
+  for s in 48 64 128 256 512; do
+    install -Dm644 "$share/icons/${s}x${s}/$_appid.png" -t "$pkgdir/usr/share/icons/hicolor/${s}x${s}/apps"
+  done
+  install -Dm644 LICENSE -t "$pkgdir/usr/share/licenses/$pkgname"
+  install -Dm644 README.md -t "$pkgdir/usr/share/doc/$pkgname"
+}

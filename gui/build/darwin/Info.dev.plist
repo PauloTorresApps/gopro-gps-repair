@@ -8,12 +8,10 @@
 		<string>Restores degraded GPS telemetry so GoPro Quik can add its gauges</string>
 		<key>CFBundleIconFile</key>
 		<string>icons</string>
-		<key>CFBundleIconName</key>
-		<string>appicon</string>
 		<key>CFBundleIdentifier</key>
-		<string>io.github.paulotorresapps.gopro-gps-repair</string>
+		<string>io.github.PauloTorresApps.gopro_gps_repair</string>
 		<key>CFBundleName</key>
-		<string>GoPro GPS Repair</string>
+		<string>GPS Repair for GoPro</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>

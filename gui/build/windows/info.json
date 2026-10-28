@@ -8,7 +8,7 @@
 			"CompanyName": "Paulo Roberto Torres",
 			"FileDescription": "Diagnosis and recovery of GPS data in GoPro videos",
 			"LegalCopyright": "(c) 2026, Paulo Roberto Torres",
-			"ProductName": "GoPro GPS Repair",
+			"ProductName": "GPS Repair for GoPro",
 			"Comments": "Restores degraded GPS telemetry so GoPro Quik can add its gauges"
 		}
 	}

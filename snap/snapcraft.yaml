@@ -1,0 +1,79 @@
+# Snap (Snap Store / App Center do Ubuntu) do GPS Repair for GoPro.
+#
+# Build local (Ubuntu com snapcraft instalado), na raiz do repositório:
+#   snapcraft pack
+# O nome "gopro-gps-repair" precisa ser registrado na loja antes do primeiro
+# envio: snapcraft register gopro-gps-repair
+
+name: gopro-gps-repair
+title: GPS Repair for GoPro
+version: '0.1.0'
+summary: Recover degraded GPS so GoPro Quik can add telemetry gauges
+description: |
+  On mountain bike rides or trails under tree cover, the GPS of action cameras
+  often loses signal. The telemetry recorded inside the video ends up with
+  gaps, poor precision and position jumps, and GoPro Quik refuses to add its
+  telemetry gauges.
+
+  This app assesses the GPS recorded in the video, shows its real condition
+  and, after you confirm, rebuilds the track into a new video saved in
+  ~/gopro-gps-repair. Only the GPS fields change: video, audio and all other
+  metadata stay byte-for-byte identical. A report shows what was restored and
+  how, marking each point as corrected or estimated.
+
+  Supports cameras that record GPS5 telemetry (HERO5 to HERO10). Available in
+  English, Portuguese, Spanish and Chinese. Not affiliated with GoPro, Inc.
+
+  To open videos on memory cards and external drives, connect the
+  removable-media interface: snap connect gopro-gps-repair:removable-media
+license: Apache-2.0
+contact: https://github.com/PauloTorresApps/gopro-gps-repair/issues
+issues: https://github.com/PauloTorresApps/gopro-gps-repair/issues
+source-code: https://github.com/PauloTorresApps/gopro-gps-repair
+website: https://github.com/PauloTorresApps/gopro-gps-repair
+icon: gui/build/linux/share/icons/512x512/io.github.PauloTorresApps.gopro_gps_repair.png
+
+base: core24
+grade: stable
+confinement: strict
+platforms:
+  amd64:
+  arm64:
+
+apps:
+  gopro-gps-repair-gui:
+    command: bin/gopro-gps-repair-gui
+    desktop: usr/share/applications/io.github.PauloTorresApps.gopro_gps_repair.desktop
+    common-id: io.github.PauloTorresApps.gopro_gps_repair
+    extensions: [gnome]
+    plugs: [home, removable-media]
+  gopro-gps-repair:
+    command: bin/gopro-gps-repair
+    plugs: [home, removable-media]
+
+parts:
+  gopro-gps-repair:
+    plugin: nil
+    source: .
+    build-snaps:
+      - go/1.25/stable
+      - node/22/stable
+    build-packages:
+      - gcc
+      - pkg-config
+      - libgtk-4-dev
+      - libwebkitgtk-6.0-dev
+    override-build: |
+      set -e
+      export GOTOOLCHAIN=local GOFLAGS="-trimpath -mod=readonly"
+      (cd gui/frontend && npm ci --no-audit --no-fund && npm run build)
+      (cd gui && go build -tags production -ldflags '-s -w' -o "$CRAFT_PART_INSTALL/bin/gopro-gps-repair-gui" .)
+      go build -ldflags '-s -w' -o "$CRAFT_PART_INSTALL/bin/gopro-gps-repair" ./cmd/gopro-gps-repair
+      share=gui/build/linux/share
+      id=io.github.PauloTorresApps.gopro_gps_repair
+      install -Dm644 "$share/$id.desktop" "$CRAFT_PART_INSTALL/usr/share/applications/$id.desktop"
+      # No snap, o Exec e o Icon apontam para os caminhos do próprio snap.
+      sed -i "s|^Exec=.*|Exec=gopro-gps-repair.gopro-gps-repair-gui|; s|^Icon=.*|Icon=\${SNAP}/meta/gui/icon.png|" \
+        "$CRAFT_PART_INSTALL/usr/share/applications/$id.desktop"
+      install -Dm644 "$share/$id.metainfo.xml" "$CRAFT_PART_INSTALL/usr/share/metainfo/$id.metainfo.xml"
+      install -Dm644 LICENSE "$CRAFT_PART_INSTALL/usr/share/doc/gopro-gps-repair/LICENSE"
