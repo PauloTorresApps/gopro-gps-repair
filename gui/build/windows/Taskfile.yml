@@ -57,7 +57,7 @@ tasks:
       - cmd: rm -f *.syso
         platforms: [linux, darwin]
     vars:
-      BUILD_FLAGS: '{{if eq .DEV "true"}}{{if or .EXTRA_TAGS (eq .OBFUSCATED "true")}}-tags {{if eq .OBFUSCATED "true"}}wails_obfuscated{{if .EXTRA_TAGS}},{{end}}{{end}}{{.EXTRA_TAGS}} {{end}}-buildvcs=false -gcflags=all="-l"{{else}}-tags production{{if eq .OBFUSCATED "true"}},wails_obfuscated{{end}}{{if .EXTRA_TAGS}},{{.EXTRA_TAGS}}{{end}} -trimpath -buildvcs=false -ldflags="-w -s -H windowsgui"{{end}}'
+      BUILD_FLAGS: '{{if eq .DEV "true"}}{{if or .EXTRA_TAGS (eq .OBFUSCATED "true")}}-tags {{if eq .OBFUSCATED "true"}}wails_obfuscated{{if .EXTRA_TAGS}},{{end}}{{end}}{{.EXTRA_TAGS}} {{end}}-buildvcs=false -gcflags=all="-l" -ldflags="{{.VERSION_LDFLAGS}}"{{else}}-tags production{{if eq .OBFUSCATED "true"}},wails_obfuscated{{end}}{{if .EXTRA_TAGS}},{{.EXTRA_TAGS}}{{end}} -trimpath -buildvcs=false -ldflags="-w -s {{.VERSION_LDFLAGS}} -H windowsgui"{{end}}'
     env:
       GOOS: windows
       CGO_ENABLED: '{{.CGO_ENABLED | default "0"}}'
@@ -108,13 +108,13 @@ tasks:
     summary: Generates Windows `.syso` file
     dir: build
     cmds:
-      # A versão vem de VERSION (raiz do repositório): grava cópias de
-      # info.json e do manifesto com ela e gera o .syso a partir delas.
+      # A versão vem da tag do Git (VERSION_NUM no Taskfile): grava cópias
+      # de info.json e do manifesto com ela e gera o .syso a partir delas.
       - mkdir -p ../bin/windows
       - |
-        sed -e 's/"file_version": "[^"]*"/"file_version": "{{.VERSION}}"/' -e 's/"ProductVersion": "[^"]*"/"ProductVersion": "{{.VERSION}}"/' windows/info.json > ../bin/windows/info.json
+        sed -e 's/"file_version": "[^"]*"/"file_version": "{{.VERSION_NUM}}"/' -e 's/"ProductVersion": "[^"]*"/"ProductVersion": "{{.VERSION_NUM}}"/' windows/info.json > ../bin/windows/info.json
       - |
-        sed -e 's/name="io\.github\.PauloTorresApps\.gopro_gps_repair" version="[^"]*"/name="io.github.PauloTorresApps.gopro_gps_repair" version="{{.VERSION}}"/' windows/wails.exe.manifest > ../bin/windows/wails.exe.manifest
+        sed -e 's/name="io\.github\.PauloTorresApps\.gopro_gps_repair" version="[^"]*"/name="io.github.PauloTorresApps.gopro_gps_repair" version="{{.VERSION_NUM}}"/' windows/wails.exe.manifest > ../bin/windows/wails.exe.manifest
       - wails3 generate syso -arch {{.ARCH}} -icon windows/icon.ico -manifest ../bin/windows/wails.exe.manifest -info ../bin/windows/info.json -out ../wails_windows_{{.ARCH}}.syso
     vars:
       ARCH: '{{.ARCH | default ARCH}}'
@@ -132,9 +132,9 @@ tasks:
       - wails3 generate webview2bootstrapper -dir "{{.ROOT_DIR}}/build/windows/nsis"
       - |
         {{if eq OS "windows"}}
-        makensis -DINFO_PRODUCTVERSION="{{.VERSION}}" {{if eq .INSTALL_SCOPE "user"}}-DWAILS_INSTALL_SCOPE=user -DREQUEST_EXECUTION_LEVEL=user {{end}}-DARG_WAILS_{{.ARG_FLAG}}_BINARY="{{.ROOT_DIR}}\{{.BIN_DIR}}\{{.APP_NAME}}.exe" project.nsi
+        makensis -DINFO_PRODUCTVERSION="{{.VERSION_NUM}}" {{if eq .INSTALL_SCOPE "user"}}-DWAILS_INSTALL_SCOPE=user -DREQUEST_EXECUTION_LEVEL=user {{end}}-DARG_WAILS_{{.ARG_FLAG}}_BINARY="{{.ROOT_DIR}}\{{.BIN_DIR}}\{{.APP_NAME}}.exe" project.nsi
         {{else}}
-        makensis -DINFO_PRODUCTVERSION="{{.VERSION}}" {{if eq .INSTALL_SCOPE "user"}}-DWAILS_INSTALL_SCOPE=user -DREQUEST_EXECUTION_LEVEL=user {{end}}-DARG_WAILS_{{.ARG_FLAG}}_BINARY="{{.ROOT_DIR}}/{{.BIN_DIR}}/{{.APP_NAME}}.exe" project.nsi
+        makensis -DINFO_PRODUCTVERSION="{{.VERSION_NUM}}" {{if eq .INSTALL_SCOPE "user"}}-DWAILS_INSTALL_SCOPE=user -DREQUEST_EXECUTION_LEVEL=user {{end}}-DARG_WAILS_{{.ARG_FLAG}}_BINARY="{{.ROOT_DIR}}/{{.BIN_DIR}}/{{.APP_NAME}}.exe" project.nsi
         {{end}}
     vars:
       ARCH: '{{.ARCH | default ARCH}}'

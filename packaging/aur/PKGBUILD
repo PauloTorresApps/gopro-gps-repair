@@ -31,14 +31,15 @@ build() {
   export GOPATH="$srcdir/gopath"
   export CGO_CPPFLAGS="$CPPFLAGS" CGO_CFLAGS="$CFLAGS" CGO_CXXFLAGS="$CXXFLAGS" CGO_LDFLAGS="$LDFLAGS"
   export GOFLAGS='-buildmode=pie -trimpath -mod=readonly -modcacherw'
+  local ldflags="-linkmode=external -X gopro-gps-repair/internal/versao.Version=$pkgver"
 
   # Interface: o frontend (React) é embutido no binário. As bindings em
   # gui/frontend/bindings já vêm no código-fonte; não é preciso a CLI do Wails.
   (cd gui/frontend && npm run build)
-  (cd gui && go build -tags production -ldflags '-linkmode=external' -o ../gopro-gps-repair-gui .)
+  (cd gui && go build -tags production -ldflags "$ldflags" -o ../gopro-gps-repair-gui .)
 
   # Linha de comando
-  go build -ldflags '-linkmode=external' -o gopro-gps-repair ./cmd/gopro-gps-repair
+  go build -ldflags "$ldflags" -o gopro-gps-repair ./cmd/gopro-gps-repair
 }
 
 check() {

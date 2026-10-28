@@ -11,7 +11,7 @@ info:
   description: "Diagnosis and recovery of GPS data in GoPro videos" # The application description
   copyright: "(c) 2026, Paulo Roberto Torres" # Copyright text
   comments: "Restores degraded GPS telemetry so GoPro Quik can add its gauges" # Comments
-  version: "0.0.0" # Não usada: a versão vem do arquivo VERSION, na raiz do repositório
+  version: "0.0.0" # Não usada: a versão vem da tag do Git (veja gui/Taskfile.yml)
   # cfBundleIconName: "appicon" # The macOS icon name in Assets.car icon bundles (optional)
   #                               # Should match the name of your .icon file without the extension
   #                               # If not set and Assets.car exists, defaults to "appicon"

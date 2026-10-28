@@ -288,13 +288,21 @@ os metadados das lojas ficam em `gui/build/linux/share/`.
 
 **Publicar uma versão.** O workflow `.github/workflows/packages.yml` gera todos
 os pacotes (Linux, Flatpak, Snap, Windows e macOS) e cria uma Release em
-rascunho no GitHub quando uma tag `vX.Y.Z` é enviada. A versão fica só no
-arquivo `VERSION`, na raiz: os pacotes Linux, o Snap, o macOS e o Windows a
-leem dele. Ao lançar uma versão, mude o `VERSION` e escreva à mão as duas
-cópias que as lojas exigem: a entrada nova em `<releases>` no metainfo (com
-data e novidades) e o `pkgver` do `packaging/aur/PKGBUILD` e do `.SRCINFO`.
-`make conferir-versao` (também rodado pelo CI) acusa o que faltar, e o CI
-recusa uma tag diferente do `VERSION`.
+rascunho no GitHub quando uma tag `vX.Y.Z` é enviada. A versão vem da tag: o
+build a lê com `git describe` e a grava nos executáveis e pacotes (entre duas
+tags, fica `X.Y.Z-N-gHASH`; sem tag, `0.0.0-dev`; `make versao` mostra qual
+será usada). As lojas exigem duas cópias escritas à mão, que devem ser
+atualizadas antes da tag: a entrada nova em `<releases>` no metainfo (com data
+e novidades) e o `pkgver` do `packaging/aur/PKGBUILD` e do `.SRCINFO`. Para
+lançar a 0.3.0, por exemplo:
+
+```sh
+make conferir-versao TAG=v0.3.0   # acusa o que falta no metainfo e no AUR
+git commit -am "Versão 0.3.0"
+git tag v0.3.0 && git push origin v0.3.0
+```
+
+O CI repete a conferência e recusa a tag se algo não bater.
 
 - **Flathub:** o Flathub compila sem internet; as dependências Go e npm ficam
   listadas em `packaging/flatpak/go-sources.json` e `npm-sources.json`. Depois de
@@ -631,13 +639,21 @@ metadata lives in `gui/build/linux/share/`.
 
 **Publishing a release.** The `.github/workflows/packages.yml` workflow builds
 every package (Linux, Flatpak, Snap, Windows and macOS) and creates a draft
-GitHub Release when a `vX.Y.Z` tag is pushed. The version lives only in the
-`VERSION` file at the repository root: the Linux packages, the Snap, macOS and
-Windows read it from there. When releasing, change `VERSION` and hand-write the
-two copies the stores require: a new `<releases>` entry in the metainfo (with
-date and changes) and the `pkgver` in `packaging/aur/PKGBUILD` and `.SRCINFO`.
-`make conferir-versao` (also run by CI) reports anything missing, and CI
-rejects a tag that differs from `VERSION`.
+GitHub Release when a `vX.Y.Z` tag is pushed. The version comes from the tag:
+the build reads it with `git describe` and stamps it into the executables and
+packages (between two tags it becomes `X.Y.Z-N-gHASH`; with no tag,
+`0.0.0-dev`; `make versao` shows which one will be used). The stores require
+two hand-written copies, to be updated before tagging: a new `<releases>` entry
+in the metainfo (with date and changes) and the `pkgver` in
+`packaging/aur/PKGBUILD` and `.SRCINFO`. To release 0.3.0, for example:
+
+```sh
+make conferir-versao TAG=v0.3.0   # reports what is missing in metainfo and AUR
+git commit -am "Versão 0.3.0"
+git tag v0.3.0 && git push origin v0.3.0
+```
+
+CI runs the same check and rejects the tag if anything does not match.
 
 - **Flathub:** Flathub builds without internet access; the Go and npm
   dependencies are listed in `packaging/flatpak/go-sources.json` and

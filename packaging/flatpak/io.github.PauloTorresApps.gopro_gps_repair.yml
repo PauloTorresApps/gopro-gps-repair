@@ -51,12 +51,16 @@ modules:
       - |
         set -e
         export GOPROXY="file://$PWD/goproxy" GOPATH="$PWD/gopath" GOCACHE="$PWD/gocache"
+        # Versão: da tag do Git; sem .git, a última <release> do metainfo.
+        v=$(git describe --tags --match 'v[0-9]*' 2>/dev/null | sed 's/^v//') || true
+        [ -n "$v" ] || v=$(sed -n 's/.*<release version="\([^"]*\)".*/\1/p' gui/build/linux/share/io.github.PauloTorresApps.gopro_gps_repair.metainfo.xml | head -n1)
+        ldflags="-s -w -X gopro-gps-repair/internal/versao.Version=$v"
         # Frontend (React): instala os pacotes npm a partir dos arquivos baixados.
         for f in npm-tarballs/*.tgz; do npm cache add --cache="$PWD/npm-cache" "$PWD/$f"; done
         (cd gui/frontend && npm ci --offline --cache="$PWD/../../npm-cache" --no-audit --no-fund && npm run build)
         # Interface (com o frontend embutido) e linha de comando.
-        (cd gui && go build -tags production -ldflags '-s -w' -o /app/bin/gopro-gps-repair-gui .)
-        go build -ldflags '-s -w' -o /app/bin/gopro-gps-repair ./cmd/gopro-gps-repair
+        (cd gui && go build -tags production -ldflags "$ldflags" -o /app/bin/gopro-gps-repair-gui .)
+        go build -ldflags "$ldflags" -o /app/bin/gopro-gps-repair ./cmd/gopro-gps-repair
       - install -Dm644 -t /app/share/applications gui/build/linux/share/${FLATPAK_ID}.desktop
       - install -Dm644 -t /app/share/metainfo gui/build/linux/share/${FLATPAK_ID}.metainfo.xml
       - install -Dm644 -t /app/share/icons/hicolor/scalable/apps gui/build/linux/share/icons/scalable/${FLATPAK_ID}.svg

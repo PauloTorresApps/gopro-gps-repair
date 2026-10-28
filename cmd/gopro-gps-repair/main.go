@@ -16,13 +16,13 @@ import (
 	"strings"
 	"time"
 
-	goprogpsrepair "gopro-gps-repair"
 	"gopro-gps-repair/internal/diagnose"
 	"gopro-gps-repair/internal/repair"
 	"gopro-gps-repair/internal/telemetry"
+	"gopro-gps-repair/internal/versao"
 )
 
-var usage = `gopro-gps-repair ` + goprogpsrepair.Version + `: diagnóstico e recuperação do GPS de vídeos GoPro
+var usage = `gopro-gps-repair ` + versao.Atual() + `: diagnóstico e recuperação do GPS de vídeos GoPro
 
 Uso:
   gopro-gps-repair diagnosticar <video.MP4> [opções]
@@ -44,7 +44,7 @@ func main() {
 	case "reparar", "repair":
 		err = cmdRepair(os.Args[2:])
 	case "versao", "versão", "version", "-v", "--version":
-		fmt.Println("gopro-gps-repair", goprogpsrepair.Version)
+		fmt.Println("gopro-gps-repair", versao.Atual())
 		return
 	case "-h", "--help", "ajuda", "help":
 		fmt.Print(usage)

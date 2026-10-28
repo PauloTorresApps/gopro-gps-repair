@@ -63,7 +63,7 @@ export function ShowInFolder(path: string): $CancellablePromise<void> {
 }
 
 /**
- * Version devolve a versão do app (arquivo VERSION, embutido na compilação).
+ * Version devolve a versão do app (da tag do Git, gravada na compilação).
  */
 export function Version(): $CancellablePromise<string> {
     return $Call.ByID(1965960136);

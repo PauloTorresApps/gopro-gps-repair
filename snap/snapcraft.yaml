@@ -7,7 +7,7 @@
 
 name: gopro-gps-repair
 title: GPS Repair for GoPro
-# A versão vem do arquivo VERSION (veja adopt-info e craftctl abaixo).
+# A versão vem da tag do Git (veja adopt-info e craftctl abaixo).
 adopt-info: gopro-gps-repair
 summary: Recover degraded GPS so GoPro Quik can add telemetry gauges
 description: |
@@ -66,11 +66,15 @@ parts:
       - libwebkitgtk-6.0-dev
     override-build: |
       set -e
-      craftctl set version="$(cat VERSION)"
+      # Versão: da tag do Git; sem .git, a última <release> do metainfo.
+      v=$(git describe --tags --match 'v[0-9]*' 2>/dev/null | sed 's/^v//') || true
+      [ -n "$v" ] || v=$(sed -n 's/.*<release version="\([^"]*\)".*/\1/p' gui/build/linux/share/io.github.PauloTorresApps.gopro_gps_repair.metainfo.xml | head -n1)
+      craftctl set version="$v"
+      ldflags="-s -w -X gopro-gps-repair/internal/versao.Version=$v"
       export GOTOOLCHAIN=local GOFLAGS="-trimpath -mod=readonly"
       (cd gui/frontend && npm ci --no-audit --no-fund && npm run build)
-      (cd gui && go build -tags production -ldflags '-s -w' -o "$CRAFT_PART_INSTALL/bin/gopro-gps-repair-gui" .)
-      go build -ldflags '-s -w' -o "$CRAFT_PART_INSTALL/bin/gopro-gps-repair" ./cmd/gopro-gps-repair
+      (cd gui && go build -tags production -ldflags "$ldflags" -o "$CRAFT_PART_INSTALL/bin/gopro-gps-repair-gui" .)
+      go build -ldflags "$ldflags" -o "$CRAFT_PART_INSTALL/bin/gopro-gps-repair" ./cmd/gopro-gps-repair
       share=gui/build/linux/share
       id=io.github.PauloTorresApps.gopro_gps_repair
       install -Dm644 "$share/$id.desktop" "$CRAFT_PART_INSTALL/usr/share/applications/$id.desktop"

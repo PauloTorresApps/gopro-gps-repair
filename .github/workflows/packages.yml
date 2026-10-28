@@ -1,7 +1,8 @@
-# Gera os pacotes do app. Ao enviar uma tag vX.Y.Z, os arquivos são anexados a
-# uma Release do GitHub (rascunho) com o mesmo nome.
+# Gera os pacotes do app. A versão vem da tag: ao enviar uma tag vX.Y.Z, os
+# pacotes saem com X.Y.Z e são anexados a uma Release do GitHub (rascunho).
 #
-#   git tag v$(cat VERSION) && git push origin v$(cat VERSION)
+#   make conferir-versao TAG=v0.3.0     # metainfo e AUR já com 0.3.0?
+#   git tag v0.3.0 && git push origin v0.3.0
 #
 # Também pode ser disparado à mão (aba Actions), só para gerar os artefatos.
 name: Pacotes
@@ -24,15 +25,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
       - uses: actions/setup-go@v6
         with: { go-version: '${{ env.GO_VERSION }}' }
       - run: go vet ./... && go test ./...
-      - name: Versão (VERSION, metainfo e AUR; a tag tem que ser igual)
-        run: |
-          make conferir-versao
-          if [ "$GITHUB_REF_TYPE" = tag ] && [ "${GITHUB_REF_NAME#v}" != "$(tr -d '[:space:]' < VERSION)" ]; then
-            echo "a tag $GITHUB_REF_NAME não bate com o arquivo VERSION ($(cat VERSION))"; exit 1
-          fi
+      - name: Versão da tag no metainfo e no AUR
+        if: github.ref_type == 'tag'
+        run: make conferir-versao TAG="$GITHUB_REF_NAME"
 
   linux:
     # Ubuntu 24.04 (glibc 2.39): os binários rodam nele e nas distros mais novas.
@@ -40,6 +39,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
       - uses: actions/setup-go@v6
         with: { go-version: '${{ env.GO_VERSION }}', cache-dependency-path: gui/go.sum }
       - uses: actions/setup-node@v5
@@ -49,7 +49,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev pkg-config
       - run: go install github.com/wailsapp/wails/v3/cmd/wails3@${{ env.WAILS_VERSION }}
-      - name: .deb, .rpm, Arch e AppImage (versão do arquivo VERSION)
+      - name: .deb, .rpm, Arch e AppImage (versão da tag)
         working-directory: gui
         env:
           APPIMAGE_EXTRACT_AND_RUN: '1'
@@ -71,6 +71,7 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: gopro-gps-repair.flatpak
@@ -82,6 +83,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
       - uses: snapcore/action-build@v1
         id: snap
       - uses: actions/upload-artifact@v4
@@ -96,6 +98,7 @@ jobs:
       run: { shell: bash }
     steps:
       - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
       - uses: actions/setup-go@v6
         with: { go-version: '${{ env.GO_VERSION }}', cache-dependency-path: gui/go.sum }
       - uses: actions/setup-node@v5
@@ -118,6 +121,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
       - uses: actions/setup-go@v6
         with: { go-version: '${{ env.GO_VERSION }}', cache-dependency-path: gui/go.sum }
       - uses: actions/setup-node@v5

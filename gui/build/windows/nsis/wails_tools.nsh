@@ -13,7 +13,7 @@
 !ifndef INFO_PRODUCTNAME
     !define INFO_PRODUCTNAME "GPS Repair for GoPro"
 !endif
-; A versão real vem do arquivo VERSION: o Taskfile a passa com -DINFO_PRODUCTVERSION.
+; A versão real vem da tag do Git: o Taskfile a passa com -DINFO_PRODUCTVERSION.
 !ifndef INFO_PRODUCTVERSION
     !define INFO_PRODUCTVERSION "0.0.0"
 !endif

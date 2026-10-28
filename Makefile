@@ -1,9 +1,18 @@
 BIN := bin/gopro-gps-repair
 
-.PHONY: build test vet diagnosticar reparar gui gui-dev pacotes conferir-versao flatpak fontes-flatpak clean
+# Versão: vem da tag do Git (vX.Y.Z). Depois da tag, X.Y.Z-N-gHASH; sem tag,
+# 0.0.0-dev. Gravada no binário pelo pacote internal/versao.
+VERSION ?= $(or $(patsubst v%,%,$(shell git describe --tags --match 'v[0-9]*' 2>/dev/null)),0.0.0-dev)
+LDFLAGS := -X gopro-gps-repair/internal/versao.Version=$(VERSION)
+
+.PHONY: build versao test vet diagnosticar reparar gui gui-dev pacotes conferir-versao flatpak fontes-flatpak clean
 
 build:
-	go build -o $(BIN) ./cmd/gopro-gps-repair
+	go build -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/gopro-gps-repair
+
+# Mostra a versão que o build vai usar
+versao:
+	@echo $(VERSION)
 
 test:
 	go test ./...
@@ -27,16 +36,18 @@ gui:
 gui-dev:
 	cd gui && wails3 dev -config ./build/config.yml
 
-# Pacotes Linux (.deb, .rpm, Arch e AppImage) em gui/bin. A versão vem do
-# arquivo VERSION; `make pacotes VERSION=x.y.z` sobrepõe (só para testes).
+# Pacotes Linux (.deb, .rpm, Arch e AppImage) em gui/bin, com a versão da tag
 pacotes:
-	cd gui && wails3 task linux:package $(if $(VERSION),VERSION=$(VERSION))
+	cd gui && wails3 task linux:package VERSION=$(VERSION)
 
-# A versão fica só em VERSION; as lojas exigem duas cópias escritas à mão
-# (metainfo e AUR). Confere se elas batem.
+# Antes de criar a tag vX.Y.Z: as lojas exigem a versão escrita no metainfo
+# (<release>) e no AUR (pkgver). Confere as duas contra TAG (padrão: a última
+# tag). Ex.: make conferir-versao TAG=v0.3.0
 METAINFO := gui/build/linux/share/io.github.PauloTorresApps.gopro_gps_repair.metainfo.xml
+TAG ?= $(shell git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null)
 conferir-versao:
-	@v=$$(tr -d '[:space:]' < VERSION); erro=0; \
+	@[ -n "$(TAG)" ] || { echo "nenhuma tag vX.Y.Z; use: make conferir-versao TAG=vX.Y.Z"; exit 1; }
+	@v=$(patsubst v%,%,$(TAG)); erro=0; \
 	grep -q "<release version=\"$$v\"" $(METAINFO) || { echo "$(METAINFO): falta <release version=\"$$v\">"; erro=1; }; \
 	grep -qx "pkgver=$$v" packaging/aur/PKGBUILD || { echo "packaging/aur/PKGBUILD: pkgver não é $$v"; erro=1; }; \
 	grep -qx "	pkgver = $$v" packaging/aur/.SRCINFO || { echo "packaging/aur/.SRCINFO: pkgver não é $$v"; erro=1; }; \
