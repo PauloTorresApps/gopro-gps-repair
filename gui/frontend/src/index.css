@@ -38,13 +38,6 @@ body {
   user-select: none;
 }
 
-/* A lista aberta de um <select> é desenhada pelo sistema, com fundo claro:
-   as opções usam texto preto fosco para continuarem legíveis. */
-select option {
-  background-color: #ffffff;
-  color: var(--color-ink-950);
-}
-
 /* Textos que o usuário pode querer copiar (caminhos, nomes de arquivo). */
 .selectable {
   user-select: text;

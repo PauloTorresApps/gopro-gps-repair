@@ -3,7 +3,8 @@ import { Events } from "@wailsio/runtime";
 import { RepairService } from "../bindings/gopro-gps-repair/gui";
 import type { Report } from "../bindings/gopro-gps-repair/internal/diagnose";
 import type { Result } from "../bindings/gopro-gps-repair/internal/repair";
-import { errorKey, languages, useI18n, type Lang } from "./i18n";
+import { errorKey, useI18n } from "./i18n";
+import { LanguageSelect } from "./LanguageSelect";
 import { Button, Card, Icon, Spinner } from "./ui";
 import { DiagnosisView } from "./DiagnosisView";
 import { ProgressView, type ProgressState } from "./ProgressView";
@@ -147,7 +148,7 @@ export default function App() {
 }
 
 function Header() {
-  const { t, lang, setLang } = useI18n();
+  const { t } = useI18n();
   return (
     <header className="border-b border-ink-800 bg-ink-950/90">
       <div className="mx-auto flex max-w-5xl items-center gap-4 px-6 py-4">
@@ -158,20 +159,7 @@ function Header() {
           </h1>
           <p className="truncate text-xs text-ink-400">{t("app.tagline")}</p>
         </div>
-        <label className="flex items-center gap-2 text-xs text-ink-400">
-          <span className="sr-only sm:not-sr-only">{t("app.language")}</span>
-          <select
-            value={lang}
-            onChange={(e) => setLang(e.target.value as Lang)}
-            className="rounded-lg border border-ink-700 bg-ink-850 px-2.5 py-1.5 text-sm text-ink-100 focus:border-sky-brand focus:outline-none"
-          >
-            {languages.map((l) => (
-              <option key={l.code} value={l.code} className="bg-white text-ink-950">
-                {l.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <LanguageSelect />
       </div>
     </header>
   );
