@@ -2,7 +2,7 @@
 
 *[English version below](#english)*
 
-Diagnóstico e recuperação do GPS gravado por câmeras GoPro.
+Diagnóstico e recuperação dos pontos GPS em vídeos gravados por câmeras GoPro.
 
 A GoPro grava a telemetria (GPS, acelerômetro, giroscópio...) dentro do próprio
 MP4, numa trilha `gpmd` no formato GPMF. Quando a câmera começa a gravar antes de
