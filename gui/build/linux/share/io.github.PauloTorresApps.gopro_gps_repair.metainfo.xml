@@ -91,6 +91,11 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.2.0" date="2026-10-28">
+      <description>
+        <p>The app version is now shown in the window header and by the command-line tool (gopro-gps-repair versao).</p>
+      </description>
+    </release>
     <release version="0.1.0" date="2026-10-28">
       <description>
         <p>First release with a graphical interface: GPS assessment, confirmation, restoration with abort and a detailed report.</p>

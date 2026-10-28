@@ -2,6 +2,7 @@
 //
 //	gopro-gps-repair diagnosticar <video.MP4> [-blocos] [-json]
 //	gopro-gps-repair reparar <video.MP4> [-o saida.MP4] [-gpx trilha.gpx] ...
+//	gopro-gps-repair versao
 package main
 
 import (
@@ -15,16 +16,18 @@ import (
 	"strings"
 	"time"
 
+	goprogpsrepair "gopro-gps-repair"
 	"gopro-gps-repair/internal/diagnose"
 	"gopro-gps-repair/internal/repair"
 	"gopro-gps-repair/internal/telemetry"
 )
 
-const usage = `gopro-gps-repair: diagnóstico e recuperação do GPS de vídeos GoPro
+var usage = `gopro-gps-repair ` + goprogpsrepair.Version + `: diagnóstico e recuperação do GPS de vídeos GoPro
 
 Uso:
   gopro-gps-repair diagnosticar <video.MP4> [opções]
   gopro-gps-repair reparar      <video.MP4> [opções]
+  gopro-gps-repair versao
 
 Use "gopro-gps-repair <comando> -h" para ver as opções.
 `
@@ -40,6 +43,9 @@ func main() {
 		err = cmdDiagnose(os.Args[2:])
 	case "reparar", "repair":
 		err = cmdRepair(os.Args[2:])
+	case "versao", "versão", "version", "-v", "--version":
+		fmt.Println("gopro-gps-repair", goprogpsrepair.Version)
+		return
 	case "-h", "--help", "ajuda", "help":
 		fmt.Print(usage)
 		return

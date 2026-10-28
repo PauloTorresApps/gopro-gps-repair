@@ -13,6 +13,7 @@ export type Lang = (typeof languages)[number]["code"];
 const en = {
   "app.tagline": "Recover degraded GPS so GoPro Quik can add telemetry gauges",
   "app.language": "Language",
+  "app.version": "Version",
 
   "input.title": "Choose a GoPro video",
   "input.hint": "Drag an MP4 here or browse your files. The original is never changed.",
@@ -142,6 +143,7 @@ type Dict = Record<Key, string>;
 const pt: Dict = {
   "app.tagline": "Recupere o GPS degradado para o GoPro Quik adicionar os medidores de telemetria",
   "app.language": "Idioma",
+  "app.version": "Versão",
 
   "input.title": "Escolha um vídeo da GoPro",
   "input.hint": "Arraste um MP4 para cá ou procure nos seus arquivos. O original nunca é alterado.",
@@ -268,6 +270,7 @@ const pt: Dict = {
 const es: Dict = {
   "app.tagline": "Recupera el GPS degradado para que GoPro Quik pueda añadir los indicadores de telemetría",
   "app.language": "Idioma",
+  "app.version": "Versión",
 
   "input.title": "Elige un vídeo de GoPro",
   "input.hint": "Arrastra un MP4 aquí o búscalo en tus archivos. El original nunca se modifica.",
@@ -394,6 +397,7 @@ const es: Dict = {
 const zh: Dict = {
   "app.tagline": "修复受损的 GPS 数据，让 GoPro Quik 能够添加遥测仪表",
   "app.language": "语言",
+  "app.version": "版本",
 
   "input.title": "选择一个 GoPro 视频",
   "input.hint": "将 MP4 拖到此处，或浏览文件。原始文件不会被修改。",

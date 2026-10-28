@@ -5,7 +5,7 @@
 # `makepkg --printsrcinfo > .SRCINFO`.
 
 pkgname=gopro-gps-repair
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='Recover degraded GPS in GoPro videos so GoPro Quik can add telemetry gauges (GUI and CLI)'
 arch=('x86_64' 'aarch64')

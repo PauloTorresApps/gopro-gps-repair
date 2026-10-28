@@ -8,5 +8,6 @@ build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
 build/ios/xcode/overlay.json
 build/ios/xcode/gen/
 build/android/overlay.json
-build/android/gen/build/linux/appimage/*
+build/android/gen/
+build/linux/appimage/*
 !build/linux/appimage/build.sh

@@ -1,7 +1,7 @@
 # Gera os pacotes do app. Ao enviar uma tag vX.Y.Z, os arquivos são anexados a
 # uma Release do GitHub (rascunho) com o mesmo nome.
 #
-#   git tag v0.1.0 && git push origin v0.1.0
+#   git tag v$(cat VERSION) && git push origin v$(cat VERSION)
 #
 # Também pode ser disparado à mão (aba Actions), só para gerar os artefatos.
 name: Pacotes
@@ -27,6 +27,12 @@ jobs:
       - uses: actions/setup-go@v6
         with: { go-version: '${{ env.GO_VERSION }}' }
       - run: go vet ./... && go test ./...
+      - name: Versão (VERSION, metainfo e AUR; a tag tem que ser igual)
+        run: |
+          make conferir-versao
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "${GITHUB_REF_NAME#v}" != "$(tr -d '[:space:]' < VERSION)" ]; then
+            echo "a tag $GITHUB_REF_NAME não bate com o arquivo VERSION ($(cat VERSION))"; exit 1
+          fi
 
   linux:
     # Ubuntu 24.04 (glibc 2.39): os binários rodam nele e nas distros mais novas.
@@ -43,16 +49,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev pkg-config
       - run: go install github.com/wailsapp/wails/v3/cmd/wails3@${{ env.WAILS_VERSION }}
-      - name: Versão (tag sem o "v"; 0.0.0 fora de tags)
-        run: |
-          v=0.0.0
-          [ "$GITHUB_REF_TYPE" = tag ] && v="${GITHUB_REF_NAME#v}"
-          echo "VERSION=$v" >> "$GITHUB_ENV"
-      - name: .deb, .rpm, Arch e AppImage
+      - name: .deb, .rpm, Arch e AppImage (versão do arquivo VERSION)
         working-directory: gui
         env:
           APPIMAGE_EXTRACT_AND_RUN: '1'
-        run: wails3 task linux:package VERSION="$VERSION" && ls -la bin
+        run: wails3 task linux:package && ls -la bin
       - uses: actions/upload-artifact@v4
         with:
           name: linux

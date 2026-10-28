@@ -17,7 +17,7 @@
         PackageDisplayName="GPS Repair for GoPro"
         PublisherName="CN=Paulo Roberto Torres"
         PublisherDisplayName="Paulo Roberto Torres"
-        Version="0.1.0.0"
+        Version="0.0.0.0"
         PackageDescription="Diagnosis and recovery of GPS data in GoPro videos">
         <Capabilities>
             <Capability Name="runFullTrust" />

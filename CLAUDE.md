@@ -19,17 +19,19 @@ Use os alvos do `Makefile`:
 - `make test` e `make vet`;
 - `make diagnosticar VIDEO=<arquivo>`;
 - `make reparar VIDEO=<arquivo> [ARGS="..."]`;
-- `make gui` (interface), `make pacotes [VERSION=x.y.z]` (.deb, .rpm, Arch,
-  AppImage), `make flatpak` e `make fontes-flatpak`.
+- `make gui` (interface), `make pacotes` (.deb, .rpm, Arch, AppImage; versão
+  de `VERSION`), `make conferir-versao`, `make flatpak` e `make fontes-flatpak`.
 
 ## Empacotamento
 
 - Nome nas lojas: "GPS Repair for GoPro"; ID `io.github.PauloTorresApps.gopro_gps_repair`
   (AppStream, `.desktop`, Flatpak e ID do GTK, definido em `gui/appid_linux.go`;
   sem ele o app fecha dentro do Flatpak).
-- A versão aparece em `gui/Taskfile.yml`, `gui/build/config.yml`, no metainfo
-  (`gui/build/linux/share/`), em `snap/snapcraft.yaml` e em
-  `packaging/aur/PKGBUILD`: mude todas juntas.
+- A versão fica só em `VERSION` (raiz). Taskfile, nfpm, Snap (`adopt-info`),
+  macOS e Windows a leem de lá no build; os números em `gui/build/` e no
+  `package.json` são modelos (`0.0.0`) e não devem receber a versão. As únicas
+  cópias à mão são o `<releases>` do metainfo e o `pkgver` do AUR
+  (`PKGBUILD`/`.SRCINFO`); `make conferir-versao` confere as duas.
 - Mudou `gui/go.mod` ou `gui/frontend/package-lock.json`? Rode
   `make fontes-flatpak` (o Flathub compila sem internet).
 - As bindings em `gui/frontend/bindings` são versionadas: o AUR, o Flatpak e o

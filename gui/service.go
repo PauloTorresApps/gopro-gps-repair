@@ -11,6 +11,7 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 
+	goprogpsrepair "gopro-gps-repair"
 	"gopro-gps-repair/internal/diagnose"
 	"gopro-gps-repair/internal/repair"
 	"gopro-gps-repair/internal/telemetry"
@@ -45,6 +46,11 @@ type RepairService struct {
 func (s *RepairService) ServiceStartup(context.Context, application.ServiceOptions) error {
 	setLinuxAppID()
 	return nil
+}
+
+// Version devolve a versão do app (arquivo VERSION, embutido na compilação).
+func (s *RepairService) Version() string {
+	return goprogpsrepair.Version
 }
 
 // OutputDir devolve (e cria, se preciso) a pasta de saída: ~/gopro-gps-repair.

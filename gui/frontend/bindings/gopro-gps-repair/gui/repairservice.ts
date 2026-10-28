@@ -61,3 +61,10 @@ export function SelectVideo(title: string): $CancellablePromise<string> {
 export function ShowInFolder(path: string): $CancellablePromise<void> {
     return $Call.ByID(3550090454, path);
 }
+
+/**
+ * Version devolve a versão do app (arquivo VERSION, embutido na compilação).
+ */
+export function Version(): $CancellablePromise<string> {
+    return $Call.ByID(1965960136);
+}

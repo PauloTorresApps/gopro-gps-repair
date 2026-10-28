@@ -149,6 +149,10 @@ export default function App() {
 
 function Header() {
   const { t } = useI18n();
+  const [version, setVersion] = useState("");
+  useEffect(() => {
+    RepairService.Version().then(setVersion).catch(() => {});
+  }, []);
   return (
     <header className="border-b border-ink-800 bg-ink-950/90">
       <div className="mx-auto flex max-w-5xl items-center gap-4 px-6 py-4">
@@ -156,6 +160,11 @@ function Header() {
         <div className="min-w-0 flex-1">
           <h1 className="text-lg font-bold tracking-tight">
             <span className="text-sky-brand">GPS</span> Repair <span className="font-medium text-ink-300">for GoPro</span>
+            {version && (
+              <span className="selectable ml-2 align-middle text-xs font-normal text-ink-400" title={t("app.version")}>
+                v{version}
+              </span>
+            )}
           </h1>
           <p className="truncate text-xs text-ink-400">{t("app.tagline")}</p>
         </div>

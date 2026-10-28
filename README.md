@@ -51,6 +51,8 @@ make test     # roda os testes
 ```
 
 Os comandos também aceitam os nomes em inglês `diagnose` e `repair`.
+`bin/gopro-gps-repair versao` (ou `-v`) mostra a versão, que também aparece
+no cabeçalho da interface gráfica.
 
 ### Interface gráfica
 
@@ -280,15 +282,19 @@ sem vínculo com a GoPro, Inc.). Todos os pacotes trazem a interface
 | Flathub (GNOME Software, KDE Discover; Fedora, Mint, Pop!_OS...) | Flatpak | `packaging/flatpak/` (`make flatpak`) |
 | Snap Store (App Center do Ubuntu) | Snap | `snap/snapcraft.yaml` |
 
-`make pacotes VERSION=0.2.0` gera os quatro primeiros. O identificador do app
+`make pacotes` gera os quatro primeiros. O identificador do app
 (AppStream, `.desktop`, Flatpak) é `io.github.PauloTorresApps.gopro_gps_repair`;
 os metadados das lojas ficam em `gui/build/linux/share/`.
 
 **Publicar uma versão.** O workflow `.github/workflows/packages.yml` gera todos
 os pacotes (Linux, Flatpak, Snap, Windows e macOS) e cria uma Release em
-rascunho no GitHub quando uma tag `vX.Y.Z` é enviada. Antes, atualize a versão
-em `gui/Taskfile.yml`, `gui/build/config.yml`, no `<releases>` do metainfo, em
-`snap/snapcraft.yaml` e no `packaging/aur/PKGBUILD`.
+rascunho no GitHub quando uma tag `vX.Y.Z` é enviada. A versão fica só no
+arquivo `VERSION`, na raiz: os pacotes Linux, o Snap, o macOS e o Windows a
+leem dele. Ao lançar uma versão, mude o `VERSION` e escreva à mão as duas
+cópias que as lojas exigem: a entrada nova em `<releases>` no metainfo (com
+data e novidades) e o `pkgver` do `packaging/aur/PKGBUILD` e do `.SRCINFO`.
+`make conferir-versao` (também rodado pelo CI) acusa o que faltar, e o CI
+recusa uma tag diferente do `VERSION`.
 
 - **Flathub:** o Flathub compila sem internet; as dependências Go e npm ficam
   listadas em `packaging/flatpak/go-sources.json` e `npm-sources.json`. Depois de
@@ -386,6 +392,8 @@ make test     # runs the tests
 ```
 
 The commands also accept the English aliases `diagnose` and `repair`.
+`bin/gopro-gps-repair versao` (or `-v`) prints the version, which is also shown
+in the header of the graphical interface.
 
 ### Graphical interface
 
@@ -617,15 +625,19 @@ graphical app (`gopro-gps-repair-gui`) and the command line
 | Flathub (GNOME Software, KDE Discover; Fedora, Mint, Pop!_OS...) | Flatpak | `packaging/flatpak/` (`make flatpak`) |
 | Snap Store (Ubuntu App Center) | Snap | `snap/snapcraft.yaml` |
 
-`make pacotes VERSION=0.2.0` builds the first four. The app ID (AppStream,
+`make pacotes` builds the first four. The app ID (AppStream,
 `.desktop`, Flatpak) is `io.github.PauloTorresApps.gopro_gps_repair`; the store
 metadata lives in `gui/build/linux/share/`.
 
 **Publishing a release.** The `.github/workflows/packages.yml` workflow builds
 every package (Linux, Flatpak, Snap, Windows and macOS) and creates a draft
-GitHub Release when a `vX.Y.Z` tag is pushed. Before that, update the version in
-`gui/Taskfile.yml`, `gui/build/config.yml`, the metainfo `<releases>`,
-`snap/snapcraft.yaml` and `packaging/aur/PKGBUILD`.
+GitHub Release when a `vX.Y.Z` tag is pushed. The version lives only in the
+`VERSION` file at the repository root: the Linux packages, the Snap, macOS and
+Windows read it from there. When releasing, change `VERSION` and hand-write the
+two copies the stores require: a new `<releases>` entry in the metainfo (with
+date and changes) and the `pkgver` in `packaging/aur/PKGBUILD` and `.SRCINFO`.
+`make conferir-versao` (also run by CI) reports anything missing, and CI
+rejects a tag that differs from `VERSION`.
 
 - **Flathub:** Flathub builds without internet access; the Go and npm
   dependencies are listed in `packaging/flatpak/go-sources.json` and

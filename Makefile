@@ -1,6 +1,6 @@
 BIN := bin/gopro-gps-repair
 
-.PHONY: build test vet diagnosticar reparar gui gui-dev pacotes flatpak fontes-flatpak clean
+.PHONY: build test vet diagnosticar reparar gui gui-dev pacotes conferir-versao flatpak fontes-flatpak clean
 
 build:
 	go build -o $(BIN) ./cmd/gopro-gps-repair
@@ -27,9 +27,20 @@ gui:
 gui-dev:
 	cd gui && wails3 dev -config ./build/config.yml
 
-# Pacotes Linux (.deb, .rpm, Arch e AppImage) em gui/bin; VERSION opcional
+# Pacotes Linux (.deb, .rpm, Arch e AppImage) em gui/bin. A versão vem do
+# arquivo VERSION; `make pacotes VERSION=x.y.z` sobrepõe (só para testes).
 pacotes:
 	cd gui && wails3 task linux:package $(if $(VERSION),VERSION=$(VERSION))
+
+# A versão fica só em VERSION; as lojas exigem duas cópias escritas à mão
+# (metainfo e AUR). Confere se elas batem.
+METAINFO := gui/build/linux/share/io.github.PauloTorresApps.gopro_gps_repair.metainfo.xml
+conferir-versao:
+	@v=$$(tr -d '[:space:]' < VERSION); erro=0; \
+	grep -q "<release version=\"$$v\"" $(METAINFO) || { echo "$(METAINFO): falta <release version=\"$$v\">"; erro=1; }; \
+	grep -qx "pkgver=$$v" packaging/aur/PKGBUILD || { echo "packaging/aur/PKGBUILD: pkgver não é $$v"; erro=1; }; \
+	grep -qx "	pkgver = $$v" packaging/aur/.SRCINFO || { echo "packaging/aur/.SRCINFO: pkgver não é $$v"; erro=1; }; \
+	[ $$erro = 0 ] && echo "versão $$v: metainfo e AUR conferem"
 
 # Flatpak local (requer org.flatpak.Builder e o SDK do GNOME instalados)
 flatpak:
