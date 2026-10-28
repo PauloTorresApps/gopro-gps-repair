@@ -59,7 +59,7 @@ jobs:
         env:
           APPIMAGE_EXTRACT_AND_RUN: '1'
         run: wails3 task linux:package && ls -la bin
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: linux
           path: |
@@ -91,7 +91,7 @@ jobs:
         with: { fetch-depth: 0 }
       - uses: snapcore/action-build@v1
         id: snap
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: snap
           path: ${{ steps.snap.outputs.snap }}
@@ -115,7 +115,7 @@ jobs:
           command -v makensis || choco install nsis -y
           export PATH="$PATH:/c/Program Files (x86)/NSIS"
           wails3 task windows:package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: windows
           path: |
@@ -137,7 +137,7 @@ jobs:
         run: |
           wails3 task darwin:package:universal
           cd bin && ditto -c -k --keepParent gopro-gps-repair-gui.app gopro-gps-repair-gui-macos-universal.zip
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macos
           path: gui/bin/*.zip
@@ -149,10 +149,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with: { path: dist, merge-multiple: true }
       - run: ls -la dist
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           draft: true
           files: dist/*
