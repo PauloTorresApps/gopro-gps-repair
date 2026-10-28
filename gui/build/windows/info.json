@@ -1,0 +1,15 @@
+{
+	"fixed": {
+		"file_version": "0.1.0"
+	},
+	"info": {
+		"0000": {
+			"ProductVersion": "0.1.0",
+			"CompanyName": "Paulo Roberto Torres",
+			"FileDescription": "Diagnosis and recovery of GPS data in GoPro videos",
+			"LegalCopyright": "(c) 2026, Paulo Roberto Torres",
+			"ProductName": "GoPro GPS Repair",
+			"Comments": "Restores degraded GPS telemetry so GoPro Quik can add its gauges"
+		}
+	}
+}

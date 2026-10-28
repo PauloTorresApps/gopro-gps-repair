@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=gopro-gps-repair-gui
+Exec=gopro-gps-repair-gui
+Icon=gopro-gps-repair-gui
+Categories=Development;
+Terminal=false
+Keywords=wails
+Version=1.0
+StartupNotify=false

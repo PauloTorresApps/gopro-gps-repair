@@ -2,6 +2,7 @@ package writer
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -14,6 +15,10 @@ import (
 // metadados da GoPro (ou de qualquer outra fonte), vídeo, áudio e demais
 // sensores ficam garantidamente idênticos ao original.
 func VerifyOnlyPatched(orig, out string, patches []Patch) error {
+	return verifyOnlyPatched(context.Background(), orig, out, patches, nil)
+}
+
+func verifyOnlyPatched(ctx context.Context, orig, out string, patches []Patch, progress func(Stage, int64, int64)) error {
 	a, err := os.Open(orig)
 	if err != nil {
 		return err
@@ -45,12 +50,18 @@ func VerifyOnlyPatched(orig, out string, patches []Patch) error {
 	}
 
 	const chunk = 1 << 20
-	ra, rb := bufio.NewReaderSize(a, chunk), bufio.NewReaderSize(b, chunk)
+	// Só a leitura do original passa pelo ctxReader: ela dita o ritmo e o
+	// cancelamento; a do arquivo novo acompanha.
+	ca := &ctxReader{ctx: ctx, r: a, total: sa.Size(), stage: StageVerify, progress: progress}
+	ra, rb := bufio.NewReaderSize(ca, chunk), bufio.NewReaderSize(b, chunk)
 	ba, bb := make([]byte, chunk), make([]byte, chunk)
 	var pos int64
 	for {
 		na, ea := io.ReadFull(ra, ba)
 		nb, eb := io.ReadFull(rb, bb)
+		if err := ctx.Err(); err != nil {
+			return err
+		}
 		if na != nb {
 			return fmt.Errorf("verificação: leitura divergente em %d", pos)
 		}

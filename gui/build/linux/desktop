@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=GoPro GPS Repair
+Comment=Diagnosis and recovery of GPS data in GoPro videos
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/gopro-gps-repair-gui %u
+Terminal=false
+Type=Application
+Icon=gopro-gps-repair-gui
+Categories=Utility;
+StartupWMClass=gopro-gps-repair-gui
+
+ 

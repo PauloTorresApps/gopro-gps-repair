@@ -41,6 +41,7 @@ está descrita em [docs/tecnicas-matematicas.md](docs/tecnicas-matematicas.md)
 - vídeo de câmera GoPro com GPS gravado no formato `GPS5` (HERO5 a HERO10).
 
 Não é preciso ffmpeg nem outra dependência: o programa lê e grava o MP4 sozinho.
+A interface gráfica tem requisitos próprios (veja [Interface gráfica](#interface-gráfica)).
 
 ### Compilação
 
@@ -50,6 +51,35 @@ make test     # roda os testes
 ```
 
 Os comandos também aceitam os nomes em inglês `diagnose` e `repair`.
+
+### Interface gráfica
+
+Além da linha de comando, há um app de janela (Wails v3, React e Tailwind) em
+`gui/`, com textos em inglês (padrão), português, espanhol e mandarim. O fluxo:
+
+1. escolha o vídeo (botão ou arrastar o MP4 para a janela) e clique em
+   **Restaurar dados de GPS**;
+2. o app faz a avaliação do GPS (a mesma do `diagnosticar`) e mostra a nota, a
+   qualidade ao longo do vídeo e os trechos com problema;
+3. confirme a restauração ou aborte; durante a restauração também há um botão
+   de abortar, e nesse caso nenhum arquivo fica gravado;
+4. ao final, um relatório mostra o que foi restaurado (posições e altitudes
+   `corrigido`/`estimado`, medições rejeitadas, campos regravados) e como.
+
+O vídeo restaurado e o relatório JSON são gravados na pasta
+`~/gopro-gps-repair` (no diretório pessoal do usuário), com nome e data de
+criação novos. O app usa o mesmo código do `reparar`, inclusive a verificação
+byte a byte.
+
+Para compilar são necessários, além do Go, o Node.js com npm, a CLI do Wails v3
+(`go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.16`) e, no
+Linux, gcc e os pacotes de desenvolvimento do GTK 4 e do WebKitGTK 6
+(`wails3 doctor` lista o que falta).
+
+```sh
+make gui        # gera gui/bin/gopro-gps-repair-gui
+make gui-dev    # modo de desenvolvimento, com recarga automática
+```
 
 ### Diagnosticar
 
@@ -287,6 +317,7 @@ described in [docs/tecnicas-matematicas.md](docs/tecnicas-matematicas.md)
 - a video from a GoPro camera with GPS recorded in the `GPS5` format (HERO5 to HERO10).
 
 No ffmpeg or other dependency is needed: the program reads and writes the MP4 by itself.
+The graphical interface has its own requirements (see [Graphical interface](#graphical-interface)).
 
 ### Building
 
@@ -296,6 +327,35 @@ make test     # runs the tests
 ```
 
 The commands also accept the English aliases `diagnose` and `repair`.
+
+### Graphical interface
+
+Besides the command line, there is a desktop app (Wails v3, React and Tailwind)
+in `gui/`, available in English (default), Portuguese, Spanish and Mandarin.
+The flow:
+
+1. choose the video (button, or drag the MP4 onto the window) and click
+   **Restore GPS data**;
+2. the app assesses the GPS (the same assessment as `diagnosticar`) and shows
+   the score, the quality along the video and the problem stretches;
+3. confirm the restoration or abort; there is also an abort button during the
+   restoration, and if it is used no file is left behind;
+4. at the end, a report shows what was restored (`corrigido`/`estimado`
+   positions and altitudes, rejected measurements, rewritten fields) and how.
+
+The restored video and the JSON report are saved to the `~/gopro-gps-repair`
+folder (in the user's home directory), with a new name and creation date. The
+app uses the same code as `reparar`, including the byte-by-byte verification.
+
+Building it requires, besides Go, Node.js with npm, the Wails v3 CLI
+(`go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.16`) and, on
+Linux, gcc and the GTK 4 and WebKitGTK 6 development packages (`wails3 doctor`
+lists what is missing).
+
+```sh
+make gui        # creates gui/bin/gopro-gps-repair-gui
+make gui-dev    # development mode, with live reload
+```
 
 ### Diagnosing
 
