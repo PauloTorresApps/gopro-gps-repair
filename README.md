@@ -2,6 +2,17 @@
 
 *[English version below](#english)*
 
+Em atividades como mountain bike ou trilhas sob cobertura de árvores, o GPS de
+câmeras de ação (como a GoPro Hero 7 Black) frequentemente sofre perdas de
+sinal, gerando falhas nos metadados e impedindo a inserção dos medidores de
+telemetria no GoPro Quik.
+
+Esta aplicação em Go foi desenvolvida para solucionar esse problema. O software
+lê o fluxo de metadados do arquivo de vídeo original, detecta lacunas nas
+coordenadas e reconstrói os pontos faltantes por meio de interpolação
+matemática, restaurando a integridade dos dados para uso no ecossistema da
+GoPro.
+
 Diagnóstico e recuperação dos pontos GPS em vídeos gravados por câmeras GoPro.
 
 A GoPro grava a telemetria (GPS, acelerômetro, giroscópio...) dentro do próprio
@@ -236,6 +247,16 @@ reflete o que o arquivo declara, não uma nova medição.
 <a id="english"></a>
 
 # gopro-gps-repair (English)
+
+In activities such as mountain biking or trails under tree cover, the GPS of
+action cameras (such as the GoPro Hero 7 Black) often loses signal, causing
+gaps in the metadata and preventing the telemetry gauges from being added in
+GoPro Quik.
+
+This Go application was built to solve that problem. The software reads the
+metadata stream of the original video file, detects gaps in the coordinates and
+rebuilds the missing points through mathematical interpolation, restoring the
+integrity of the data for use in the GoPro ecosystem.
 
 Diagnosis and recovery of the GPS recorded by GoPro cameras.
 
