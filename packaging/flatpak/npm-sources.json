@@ -1,0 +1,362 @@
+[
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz",
+    "sha512": "da492dffb9e227a32010fc45d1b61d43a7ad65a03e7d0bc370b29c921cb5c8840ecdaa0a8c10634a3eb7fda2d58d8137aa146de5dbccfae5327c283a50a0816c",
+    "dest": "npm-tarballs",
+    "dest-filename": "jridgewell-gen-mapping-0.3.13.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@jridgewell/remapping/-/remapping-2.3.5.tgz",
+    "sha512": "2c8f6effe95a606e03b354c3292256d983eb22571560ec22d9f502eb1078de5b9e0a383157895f7ce0990ad605887e9334e5feb50297c7ded3e082876e1c8711",
+    "dest": "npm-tarballs",
+    "dest-filename": "jridgewell-remapping-2.3.5.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz",
+    "sha512": "6d12128022233f6d3fb5b5923d63048b9e1054f45913192e0fd9492fe508c542adc15240f305b54eb6f58ccb354455e8d42053359ff98690bd42f98a59da292b",
+    "dest": "npm-tarballs",
+    "dest-filename": "jridgewell-resolve-uri-3.1.2.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.6.0.tgz",
+    "sha512": "4fb8dffb9ce0b191f0349e25bd0eff69ecdbca4d27357fb32555a998703b558b04c7b6bbaabe5183921bb4916a920cdee58dacaeeab545463c43cdfb39dee217",
+    "dest": "npm-tarballs",
+    "dest-filename": "jridgewell-sourcemap-codec-1.6.0.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz",
+    "sha512": "cf3351f9275048327373c8e869e3fc410a0242bf0db98c76748232b65d507811191c9f6e5ba85e6ecad881bcfc849c1441aa374d608cb667d5f0dbb5b7038b03",
+    "dest": "npm-tarballs",
+    "dest-filename": "jridgewell-trace-mapping-0.3.31.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@oxc-project/types/-/types-0.155.0.tgz",
+    "sha512": "49e13c24fc16d71b35b4778dc9c8d4b5405d868ad16bca388e5be3c24e3d47bfd9dbdd62fb80d06bb2492203a6fd3698419c7e42b3d06d527ff5cf1d30864df1",
+    "dest": "npm-tarballs",
+    "dest-filename": "oxc-project-types-0.155.0.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@rolldown/binding-linux-arm64-gnu/-/binding-linux-arm64-gnu-1.2.15.tgz",
+    "sha512": "8930635f1f81e504af808f3d9497e6aa1e304e1f0d69b47561920837784dc78cd21b41157d5aa43af2ee94da46e36e75a5b77afc802667f2de7d5935638acf87",
+    "dest": "npm-tarballs",
+    "dest-filename": "rolldown-binding-linux-arm64-gnu-1.2.15.tgz",
+    "only-arches": [
+      "aarch64"
+    ]
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@rolldown/binding-linux-x64-gnu/-/binding-linux-x64-gnu-1.2.15.tgz",
+    "sha512": "14783ad2b4ba0c178f01867d5fd17aef1f8939b15d9a09fab6ea40d42fdadc1f82b9f1664c3e265fe7bc33be6d0a200eddfa11ffac70541234290888eec9ffaf",
+    "dest": "npm-tarballs",
+    "dest-filename": "rolldown-binding-linux-x64-gnu-1.2.15.tgz",
+    "only-arches": [
+      "x86_64"
+    ]
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz",
+    "sha512": "da3f5b1ade4987c863faf3ed8333ed97bda3d324711c0cae9a8a3a4cd7c08ec2c1d3852da52bcf6cf703701331cfb9fef42601d1cd46c501716118368e29aa1b",
+    "dest": "npm-tarballs",
+    "dest-filename": "rolldown-pluginutils-1.0.1.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.3.3.tgz",
+    "sha512": "fd3f08284b1ff554d4ead2e3802efeb2fda638fb50c731368ccc3bbb84ede344f1f90499c69ce1f79fc7e9c30aa236bd5ee5bb88c74b258041d28f46d4268082",
+    "dest": "npm-tarballs",
+    "dest-filename": "tailwindcss-node-4.3.3.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.3.3.tgz",
+    "sha512": "92b5e302292268548f68afc5900413e544f1dd5a2b9906a2679841165259f54150181febc20d4c648847006f6c98c4114ddc89c4fe90b7933032d772539156ac",
+    "dest": "npm-tarballs",
+    "dest-filename": "tailwindcss-oxide-4.3.3.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-gnu/-/oxide-linux-arm64-gnu-4.3.3.tgz",
+    "sha512": "9c3c6575c10434ec594730b6baef63aeeb59740010b5bfbc5960c24a758bd73bc1935f8537ec7a32d0d588f07900931fb6d5425217a1196bacdd704f81ab4cff",
+    "dest": "npm-tarballs",
+    "dest-filename": "tailwindcss-oxide-linux-arm64-gnu-4.3.3.tgz",
+    "only-arches": [
+      "aarch64"
+    ]
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.3.3.tgz",
+    "sha512": "b71eeeb359aec0e2802966a8daffc669a7c57906e813a6a3f3cbc2eb388dd8d0867119bc816521c23ce0f987550757b86e802d76d99ae0be37a27ba723a352e3",
+    "dest": "npm-tarballs",
+    "dest-filename": "tailwindcss-oxide-linux-x64-gnu-4.3.3.tgz",
+    "only-arches": [
+      "x86_64"
+    ]
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.3.3.tgz",
+    "sha512": "c9853c72880b79287f9acda387c163ee369b6bf1166bb25ae86a14a9865aada12e088e584ba9ace8e6d98238de766fa39ba5d98dd351581a4f3fa67cea83b173",
+    "dest": "npm-tarballs",
+    "dest-filename": "tailwindcss-vite-4.3.3.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.15.tgz",
+    "sha512": "17a6c4c9a995f632860050449a54277ac44f18e42a4b6f94c22d049b5e717a73b11da7f686fe8bf180959f7acf74f24e8897cf8829cb211cafc156aa318dcc23",
+    "dest": "npm-tarballs",
+    "dest-filename": "types-prop-types-15.7.15.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@types/react/-/react-18.3.31.tgz",
+    "sha512": "bdf12aa574efc13f75ca19b075fa2e4ad3768522b04efc91b3caa92df003cababf9310f0d2164ced693d520d4510b8fc8486f2f92ffe910092445177da7bf643",
+    "dest": "npm-tarballs",
+    "dest-filename": "types-react-18.3.31.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.3.7.tgz",
+    "sha512": "3047b751ea043585455f3a17116b2f72983a66f96b14d94e43b10eb2f848dc27c05f0ccf7cef10c2ec5de349dea6c60aab2c954274dd11fbfaf2af75c8b70aad",
+    "dest": "npm-tarballs",
+    "dest-filename": "types-react-dom-18.3.7.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@vitejs/plugin-react/-/plugin-react-6.1.2.tgz",
+    "sha512": "7e124d19476c7106b81e4234c45c70a275b28675517823c36d723b147ee39b3a67542ac5408ecf46b85679c3b6eb7eb5d2f3abb3db6bd98e3171ff2e01d1716f",
+    "dest": "npm-tarballs",
+    "dest-filename": "vitejs-plugin-react-6.1.2.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/@wailsio/runtime/-/runtime-3.0.0-beta.16.tgz",
+    "sha512": "233698ad42980e6bd60d77f73ea7e5d289d3d51e53e581d3c7e0272bdbd7e0ccae1353c5de55d9990aedbed7d8340b019cbfbd7be88226f211386863c9fd6b7b",
+    "dest": "npm-tarballs",
+    "dest-filename": "wailsio-runtime-3.0.0-beta.16.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/csstype/-/csstype-3.2.3.tgz",
+    "sha512": "cf51c629c632db103c00641fc2b9f43c0cbe3c1ed7fc64a3dd45495bda8aca7e37c566be825e675e6538aaa2cc4735952c50bc2aeb145fc4ffd240a2398a4021",
+    "dest": "npm-tarballs",
+    "dest-filename": "csstype-3.2.3.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/detect-libc/-/detect-libc-2.1.2.tgz",
+    "sha512": "06d8f604e38ef37a375b21f9f5ef0c817b3111055c6ab9143a9118aee6c1d2eaf09cdd74c90dfae2bb22072535d67665a966199b4e62fe87fb8a8e26ce2841b5",
+    "dest": "npm-tarballs",
+    "dest-filename": "detect-libc-2.1.2.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.26.0.tgz",
+    "sha512": "f6f85e772945a276f6606a20cd4297ebe25aef680e25b37540702a76bbea2f085d97f4166caa29ce8502f446d0355b009ecfdbc7fe2ecaa6a5ad0028cb5201cb",
+    "dest": "npm-tarballs",
+    "dest-filename": "enhanced-resolve-5.26.0.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/fdir/-/fdir-6.5.0.tgz",
+    "sha512": "b486d8b596ee70eb340511aa3c992c84951874bf920c7edd54cf208f2f84469dd60148cb105244fb4da46a7c87b708d63a7c2b298062c0098cd29e242c90275e",
+    "dest": "npm-tarballs",
+    "dest-filename": "fdir-6.5.0.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz",
+    "sha512": "45b279fe398570d342703579a3d7939c12c9fc7b33595d0fef76dcf857f89d2feb263f98692e881b288e2f45680585fe9755ab97793ade1fcaac7fa7849d17bd",
+    "dest": "npm-tarballs",
+    "dest-filename": "graceful-fs-4.2.11.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/jiti/-/jiti-2.7.0.tgz",
+    "sha512": "002ffb2687c9bd91abae779635a12725e38b531f89946b7bb4d6b4c198913d3e0c635c267ca8eddbee8eda9daecf6fac92597c39966624c36a7a47bb90a6cd81",
+    "dest": "npm-tarballs",
+    "dest-filename": "jiti-2.7.0.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz",
+    "sha512": "45d2547e5704ddc5332a232a420b02bb4e853eef5474824ed1b7986cf84737893a6a9809b627dca02b53f5b7313a9601b690f690233a49bce0e026aeb16fcf29",
+    "dest": "npm-tarballs",
+    "dest-filename": "js-tokens-4.0.0.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/lightningcss/-/lightningcss-1.32.0.tgz",
+    "sha512": "357601ce29cdadb95fada3c6cab6cfa03d7d0b587d95f23fd66ce0598bd75137b8d781b3fd7d450f65c165264ceeb453acc03c24bdceb4068689fac82a1439c9",
+    "dest": "npm-tarballs",
+    "dest-filename": "lightningcss-1.32.0.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/lightningcss-linux-arm64-gnu/-/lightningcss-linux-arm64-gnu-1.32.0.tgz",
+    "sha512": "d279ccca8c8e2d12577db30e8a569245c2c7dc9c39cfd1c33467d3fe0c023e06838e7c748bcc3bbc1cc52c54757fa08c2ca17c8156de6e69143777dafe4409a5",
+    "dest": "npm-tarballs",
+    "dest-filename": "lightningcss-linux-arm64-gnu-1.32.0.tgz",
+    "only-arches": [
+      "aarch64"
+    ]
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-1.32.0.tgz",
+    "sha512": "57b42be7622166674a3d5afe56dc3ca3e58bb1025809377c96821fa4368c45619465f04e60425ec89224a862033193f03f1db8a5431fc12c7123ca61aff31b38",
+    "dest": "npm-tarballs",
+    "dest-filename": "lightningcss-linux-x64-gnu-1.32.0.tgz",
+    "only-arches": [
+      "x86_64"
+    ]
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz",
+    "sha512": "972bb13c6aff59f86b95e9b608bfd472751cd7372a280226043cee918ed8e45ff242235d928ebe7d12debe5c351e03324b0edfeb5d54218e34f04b71452a0add",
+    "dest": "npm-tarballs",
+    "dest-filename": "loose-envify-1.4.0.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/magic-string/-/magic-string-0.30.21.tgz",
+    "sha512": "bddd85e1853211728670b1e8abe4c4c828f1b9e49e1e7171cb28cda7cd328345d5e2f5219c37abfe5bef96a33f6ab0796d740de4adbfde88a7c82472c7c4f609",
+    "dest": "npm-tarballs",
+    "dest-filename": "magic-string-0.30.21.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.20.tgz",
+    "sha512": "b8a760d86dc63422909fd6f260ea716c6aab4f67c63b9291b7927ff1bde9a24f2b4faab119617a871332262118b407fe155c98b83f6145a0ea5f9b8f15827865",
+    "dest": "npm-tarballs",
+    "dest-filename": "nanoid-3.3.20.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz",
+    "sha512": "c5c787dac9e1b5be4cf658aa0ec984c39ea57b7efa993664117fe311bfd1c4d1727a036e97b78db250973fd1438ff2dcbb45fc284c8c71e3f69eda5a1eb0c454",
+    "dest": "npm-tarballs",
+    "dest-filename": "picocolors-1.1.1.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.7.tgz",
+    "sha512": "a9c26ef3c436216a89b030f9dbd24a31dc069bf76f2275b81ef427470887f49b62849bf318eb1c0ed1c4df1d6904a794393cac43c91598b9c9da426eef285c18",
+    "dest": "npm-tarballs",
+    "dest-filename": "picomatch-4.0.7.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/postcss/-/postcss-8.5.32.tgz",
+    "sha512": "2c994a08201414a3ae6718a951d630d4dcc821312c3dc832386f4b92f449bee2a3fdb4736ee458d00457bcbd29586a6c66f9fc8e4bbe2cc7a9d9e534b1e1e9f2",
+    "dest": "npm-tarballs",
+    "dest-filename": "postcss-8.5.32.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/react/-/react-18.3.1.tgz",
+    "sha512": "c12fa1020252851d0a844bcf240adfb8f54dd7e1f3d6dd18ea7e632eb1906e46f8bab80f13fd11bdefb590c075bffa16807826e1621c57e8bb176a53563fb689",
+    "dest": "npm-tarballs",
+    "dest-filename": "react-18.3.1.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/react-dom/-/react-dom-18.3.1.tgz",
+    "sha512": "e66e2740aa7ead945bd3d2cd1f9f463380714e1f76e75ff295b2886e97bb4e91b17c9fbd92fe812e42c15c88e3b296e06e720136a948db7b519d3593d2c9d423",
+    "dest": "npm-tarballs",
+    "dest-filename": "react-dom-18.3.1.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/rolldown/-/rolldown-1.2.15.tgz",
+    "sha512": "ea874d0fe7de979cd5c3723861cd9eebd82f82e0e75f408000688d0d94aae2293959471a2eb903d862eea20d1770e0dba2bdf5859e5ac843205439e8f8a3d5e6",
+    "dest": "npm-tarballs",
+    "dest-filename": "rolldown-1.2.15.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/scheduler/-/scheduler-0.23.2.tgz",
+    "sha512": "50e4a1b0fc33ecdacc52a851eadd215a315dbaf3b36edbfbb680c7d7f848adf44d2030679c159dd02c094c6bd3a67815966c0609d3fdfd997fb55ac3a9cb98cd",
+    "dest": "npm-tarballs",
+    "dest-filename": "scheduler-0.23.2.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
+    "sha512": "2868fff18e37c77e5a6550edb7e27898ad61a0b18750b3187d290e0c93508cd0c2de85b53ea3e8c4cc28d292d4b1633f5041b338dfcdc5e1f2c047cd5cd3f757",
+    "dest": "npm-tarballs",
+    "dest-filename": "source-map-js-1.2.2.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.3.3.tgz",
+    "sha512": "80e855dcfeee7c4eb64031a0d7355a4e0091f84b4fbfdda4da722155c54a70b9b14f5b1406c406867663d7be63f8ca91b78ccb17b89cfac0988df8713318fb61",
+    "dest": "npm-tarballs",
+    "dest-filename": "tailwindcss-4.3.3.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/tapable/-/tapable-2.3.3.tgz",
+    "sha512": "bb173fce9a8583ac7b0bcbce13b961e8b6dd6bc7842fdce6566fcf2de4cf051861d710a0756690f89d42522786a487e6d8776db14a51bfe1ec8626ac04c71ce8",
+    "dest": "npm-tarballs",
+    "dest-filename": "tapable-2.3.3.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/tinyglobby/-/tinyglobby-0.2.17.tgz",
+    "sha512": "c1747f758a5ca8a99f5a911d66388a24ec023459dd0f40cc9eb5bf7188d51adb449017d581c2c51e836b963e3b9a339589cf72c8dbbae5a96c805e0d4324dada",
+    "dest": "npm-tarballs",
+    "dest-filename": "tinyglobby-0.2.17.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+    "sha512": "8e5d6f6733c38a72ebf5e52ddc9feded5e8580d130f508ef04f772b33f4a7d00c3e357d0ac2d98e2f290762694a454f86d795bd511e12e9a7cc2d9ba3394e04b",
+    "dest": "npm-tarballs",
+    "dest-filename": "typescript-5.9.3.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/vite/-/vite-8.3.5.tgz",
+    "sha512": "cf56298e2789f60d1e6d3990a4b06ffe8abd13717d10894e7beecb6a15bc4ab1372d3886dee7414545d03a56173fd6fe202daada9847795c63f711a5c37e0e11",
+    "dest": "npm-tarballs",
+    "dest-filename": "vite-8.3.5.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/lightningcss/-/lightningcss-1.33.0.tgz",
+    "sha512": "5a4503ae88ee26cd3192019fdae756c5adf21814713edc54901efd8ba68264b46073b3ccf1f65ef53a2c7cf0dcbc4a5065bb850129c762644b04b51b98b38820",
+    "dest": "npm-tarballs",
+    "dest-filename": "lightningcss-1.33.0.tgz"
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/lightningcss-linux-arm64-gnu/-/lightningcss-linux-arm64-gnu-1.33.0.tgz",
+    "sha512": "8f6bff8ad9b2e0794dc6573abe829762006a362d0d8362d2860e33ec6b9fa4482cd393fedacb815728bd23a607ab9ba8545c7d1138a7dde08484b5725c64272a",
+    "dest": "npm-tarballs",
+    "dest-filename": "lightningcss-linux-arm64-gnu-1.33.0.tgz",
+    "only-arches": [
+      "aarch64"
+    ]
+  },
+  {
+    "type": "file",
+    "url": "https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-1.33.0.tgz",
+    "sha512": "6abf89bbb2e670dd09a381692f88691726f0346f7fdc0fc1af9296da7da3c8e0e0dcc1195da0d800375e9a8352f810cd7cc80abf29492e3e12e6dc9101cb6e02",
+    "dest": "npm-tarballs",
+    "dest-filename": "lightningcss-linux-x64-gnu-1.33.0.tgz",
+    "only-arches": [
+      "x86_64"
+    ]
+  }
+]

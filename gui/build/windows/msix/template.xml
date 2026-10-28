@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MsixPackagingToolTemplate
+    xmlns="http://schemas.microsoft.com/msix/packaging/msixpackagingtool/template/2022">
+    <Settings
+        AllowTelemetry="false"
+        ApplyACLsToPackageFiles="true"
+        GenerateCommandLineFile="true"
+        AllowPromptForPassword="false">
+    </Settings>
+    <Installer
+        Path="gopro-gps-repair-gui"
+        Arguments=""
+        InstallLocation="C:\Program Files\Paulo Roberto Torres\GPS Repair for GoPro">
+    </Installer>
+    <PackageInformation
+        PackageName="GPSRepairForGoPro"
+        PackageDisplayName="GPS Repair for GoPro"
+        PublisherName="CN=Paulo Roberto Torres"
+        PublisherDisplayName="Paulo Roberto Torres"
+        Version="0.0.0.0"
+        PackageDescription="Diagnosis and recovery of GPS data in GoPro videos">
+        <Capabilities>
+            <Capability Name="runFullTrust" />
+            
+        </Capabilities>
+        <Applications>
+            <Application
+                Id="GPSRepairForGoPro"
+                Description="Diagnosis and recovery of GPS data in GoPro videos"
+                DisplayName="GPS Repair for GoPro"
+                ExecutableName="gopro-gps-repair-gui"
+                EntryPoint="Windows.FullTrustApplication">
+                
+            </Application>
+        </Applications>
+        <Resources>
+            <Resource Language="en-us" />
+        </Resources>
+        <Dependencies>
+            <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+        </Dependencies>
+        <Properties>
+            <Framework>false</Framework>
+            <DisplayName>GPS Repair for GoPro</DisplayName>
+            <PublisherDisplayName>Paulo Roberto Torres</PublisherDisplayName>
+            <Description>Diagnosis and recovery of GPS data in GoPro videos</Description>
+            <Logo>Assets\AppIcon.png</Logo>
+        </Properties>
+    </PackageInformation>
+    <SaveLocation PackagePath="gopro-gps-repair-gui.msix" />
+    <PackageIntegrity>
+        <CertificatePath></CertificatePath>
+    </PackageIntegrity>
+</MsixPackagingToolTemplate>

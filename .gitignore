@@ -3,3 +3,9 @@ bin/
 *.mp4
 *.relatorio.json
 *.gpx
+
+# Empacotamento
+build-flatpak/
+.flatpak-builder/
+*.flatpak
+*.snap

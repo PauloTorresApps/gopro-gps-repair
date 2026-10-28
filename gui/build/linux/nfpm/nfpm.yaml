@@ -1,0 +1,77 @@
+# Pacotes .deb (Ubuntu/Debian e derivados), .rpm (Fedora/RHEL e derivados) e
+# .pkg.tar.zst (Arch e derivados), gerados pelo nfpm via `wails3 task
+# linux:package`. Caminhos relativos à pasta gui/. A versão vem da variável de
+# ambiente VERSION (definida no Taskfile).
+#
+# Documentação: https://nfpm.goreleaser.com
+
+name: "gopro-gps-repair"
+arch: ${GOARCH}
+platform: "linux"
+version: ${VERSION}
+version_schema: semver
+release: "1"
+section: "video"
+priority: "optional"
+maintainer: "Paulo Roberto Torres <paulotorres@mpto.mp.br>"
+description: |-
+  Recover degraded GPS in GoPro videos (GPS Repair for GoPro)
+  Assesses the GPS telemetry recorded inside GoPro videos and rebuilds it into a
+  new MP4, so GoPro Quik can add its telemetry gauges. Only the GPS fields
+  change; everything else stays byte-for-byte identical. Includes a graphical
+  app (gopro-gps-repair-gui) and a command-line tool (gopro-gps-repair).
+  Not affiliated with GoPro, Inc.
+vendor: "Paulo Roberto Torres"
+homepage: "https://github.com/PauloTorresApps/gopro-gps-repair"
+license: "Apache-2.0"
+
+contents:
+  - src: "./bin/gopro-gps-repair-gui"
+    dst: "/usr/bin/gopro-gps-repair-gui"
+    file_info: { mode: 0755 }
+  - src: "./bin/gopro-gps-repair"
+    dst: "/usr/bin/gopro-gps-repair"
+    file_info: { mode: 0755 }
+  - src: "./build/linux/share/io.github.PauloTorresApps.gopro_gps_repair.desktop"
+    dst: "/usr/share/applications/io.github.PauloTorresApps.gopro_gps_repair.desktop"
+  - src: "./build/linux/share/io.github.PauloTorresApps.gopro_gps_repair.metainfo.xml"
+    dst: "/usr/share/metainfo/io.github.PauloTorresApps.gopro_gps_repair.metainfo.xml"
+  - src: "./build/linux/share/icons/scalable/io.github.PauloTorresApps.gopro_gps_repair.svg"
+    dst: "/usr/share/icons/hicolor/scalable/apps/io.github.PauloTorresApps.gopro_gps_repair.svg"
+  - src: "./build/linux/share/icons/512x512/io.github.PauloTorresApps.gopro_gps_repair.png"
+    dst: "/usr/share/icons/hicolor/512x512/apps/io.github.PauloTorresApps.gopro_gps_repair.png"
+  - src: "./build/linux/share/icons/256x256/io.github.PauloTorresApps.gopro_gps_repair.png"
+    dst: "/usr/share/icons/hicolor/256x256/apps/io.github.PauloTorresApps.gopro_gps_repair.png"
+  - src: "./build/linux/share/icons/128x128/io.github.PauloTorresApps.gopro_gps_repair.png"
+    dst: "/usr/share/icons/hicolor/128x128/apps/io.github.PauloTorresApps.gopro_gps_repair.png"
+  - src: "./build/linux/share/icons/64x64/io.github.PauloTorresApps.gopro_gps_repair.png"
+    dst: "/usr/share/icons/hicolor/64x64/apps/io.github.PauloTorresApps.gopro_gps_repair.png"
+  - src: "./build/linux/share/icons/48x48/io.github.PauloTorresApps.gopro_gps_repair.png"
+    dst: "/usr/share/icons/hicolor/48x48/apps/io.github.PauloTorresApps.gopro_gps_repair.png"
+  - src: "../LICENSE"
+    dst: "/usr/share/licenses/gopro-gps-repair/LICENSE"
+    type: license
+  - src: "../README.md"
+    dst: "/usr/share/doc/gopro-gps-repair/README.md"
+    type: doc
+
+# GTK 4 + WebKitGTK 6.0 (Ubuntu 24.04+, Debian 13+)
+depends:
+  - libgtk-4-1
+  - libwebkitgtk-6.0-4
+
+overrides:
+  # Fedora 39+, RHEL/AlmaLinux/Rocky 10
+  rpm:
+    depends:
+      - gtk4
+      - webkitgtk6.0
+  # Arch Linux, Manjaro, EndeavourOS...
+  archlinux:
+    depends:
+      - gtk4
+      - webkitgtk-6.0
+
+scripts:
+  postinstall: "./build/linux/nfpm/scripts/postinstall.sh"
+  postremove: "./build/linux/nfpm/scripts/postremove.sh"

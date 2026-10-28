@@ -1,0 +1,83 @@
+# Manifesto Flatpak (Flathub) do GPS Repair for GoPro.
+#
+# Compila a partir do código-fonte, sem internet: os módulos Go e os pacotes
+# npm vêm das listas go-sources.json e npm-sources.json (geradas pelos scripts
+# gen-go-sources.py e gen-npm-sources.py desta pasta).
+#
+# Build local, na raiz do repositório:
+#   flatpak-builder --user --install --force-clean build-flatpak \
+#     packaging/flatpak/io.github.PauloTorresApps.gopro_gps_repair.yml
+#
+# No repositório do Flathub, troque a fonte "dir" abaixo por:
+#   - type: git
+#     url: https://github.com/PauloTorresApps/gopro-gps-repair.git
+#     tag: v<versão>
+#     commit: <hash do commit da tag>
+
+id: io.github.PauloTorresApps.gopro_gps_repair
+runtime: org.gnome.Platform
+runtime-version: '51'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.golang
+  - org.freedesktop.Sdk.Extension.node24
+command: gopro-gps-repair-gui
+
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # Vídeos: as pastas usuais em modo leitura; outros lugares chegam pelo
+  # seletor de arquivos (portal). O resultado vai para ~/gopro-gps-repair.
+  - --filesystem=xdg-videos:ro
+  - --filesystem=xdg-download:ro
+  - --filesystem=~/gopro-gps-repair:create
+  # "Mostrar na pasta" no relatório.
+  - --talk-name=org.freedesktop.FileManager1
+
+build-options:
+  append-path: /usr/lib/sdk/golang/bin:/usr/lib/sdk/node24/bin
+  env:
+    GOTOOLCHAIN: local
+    GOFLAGS: -mod=readonly -trimpath -modcacherw
+    GOSUMDB: 'off'
+    CGO_ENABLED: '1'
+
+modules:
+  - name: gopro-gps-repair
+    buildsystem: simple
+    build-commands:
+      - |
+        set -e
+        export GOPROXY="file://$PWD/goproxy" GOPATH="$PWD/gopath" GOCACHE="$PWD/gocache"
+        # Versão: da tag do Git; sem .git, a última <release> do metainfo.
+        v=$(git describe --tags --match 'v[0-9]*' 2>/dev/null | sed 's/^v//') || true
+        [ -n "$v" ] || v=$(sed -n 's/.*<release version="\([^"]*\)".*/\1/p' gui/build/linux/share/io.github.PauloTorresApps.gopro_gps_repair.metainfo.xml | head -n1)
+        ldflags="-s -w -X gopro-gps-repair/internal/versao.Version=$v"
+        # Frontend (React): instala os pacotes npm a partir dos arquivos baixados.
+        for f in npm-tarballs/*.tgz; do npm cache add --cache="$PWD/npm-cache" "$PWD/$f"; done
+        (cd gui/frontend && npm ci --offline --cache="$PWD/../../npm-cache" --no-audit --no-fund && npm run build)
+        # Interface (com o frontend embutido) e linha de comando.
+        (cd gui && go build -tags production -ldflags "$ldflags" -o /app/bin/gopro-gps-repair-gui .)
+        go build -ldflags "$ldflags" -o /app/bin/gopro-gps-repair ./cmd/gopro-gps-repair
+      - install -Dm644 -t /app/share/applications gui/build/linux/share/${FLATPAK_ID}.desktop
+      - install -Dm644 -t /app/share/metainfo gui/build/linux/share/${FLATPAK_ID}.metainfo.xml
+      - install -Dm644 -t /app/share/icons/hicolor/scalable/apps gui/build/linux/share/icons/scalable/${FLATPAK_ID}.svg
+      - |
+        for s in 48 64 128 256 512; do
+          install -Dm644 -t /app/share/icons/hicolor/${s}x${s}/apps gui/build/linux/share/icons/${s}x${s}/${FLATPAK_ID}.png
+        done
+      - install -Dm644 -t /app/share/licenses/${FLATPAK_ID} LICENSE
+    sources:
+      - type: dir
+        path: ../..
+        skip:
+          - gui/frontend/node_modules
+          - gui/frontend/dist
+          - gui/bin
+          - bin
+          - build-flatpak
+          - .flatpak-builder
+      - go-sources.json
+      - npm-sources.json

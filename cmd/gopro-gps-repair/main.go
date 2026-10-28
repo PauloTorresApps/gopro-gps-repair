@@ -2,31 +2,32 @@
 //
 //	gopro-gps-repair diagnosticar <video.MP4> [-blocos] [-json]
 //	gopro-gps-repair reparar <video.MP4> [-o saida.MP4] [-gpx trilha.gpx] ...
+//	gopro-gps-repair versao
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"math"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
 	"gopro-gps-repair/internal/diagnose"
-	"gopro-gps-repair/internal/gpx"
-	"gopro-gps-repair/internal/reconstruct"
+	"gopro-gps-repair/internal/repair"
 	"gopro-gps-repair/internal/telemetry"
-	"gopro-gps-repair/internal/writer"
+	"gopro-gps-repair/internal/versao"
 )
 
-const usage = `gopro-gps-repair: diagnóstico e recuperação do GPS de vídeos GoPro
+var usage = `gopro-gps-repair ` + versao.Atual() + `: diagnóstico e recuperação do GPS de vídeos GoPro
 
 Uso:
   gopro-gps-repair diagnosticar <video.MP4> [opções]
   gopro-gps-repair reparar      <video.MP4> [opções]
+  gopro-gps-repair versao
 
 Use "gopro-gps-repair <comando> -h" para ver as opções.
 `
@@ -42,6 +43,9 @@ func main() {
 		err = cmdDiagnose(os.Args[2:])
 	case "reparar", "repair":
 		err = cmdRepair(os.Args[2:])
+	case "versao", "versão", "version", "-v", "--version":
+		fmt.Println("gopro-gps-repair", versao.Atual())
+		return
 	case "-h", "--help", "ajuda", "help":
 		fmt.Print(usage)
 		return
@@ -99,8 +103,8 @@ func cmdRepair(args []string) error {
 	out := fs.String("o", "", "arquivo de saída (padrão: <nome>_gps_corrigido.MP4 na mesma pasta)")
 	gpxPath := fs.String("gpx", "", "também exporta a trilha reconstruída em GPX")
 	report := fs.String("relatorio", "", "relatório JSON (padrão: <saída>.relatorio.json)")
-	dop := fs.Float64("dop", 2.0, "DOP declarado nos blocos com medição corrigida")
-	dopEst := fs.Float64("dop-estimado", 4.0, "DOP declarado nos blocos majoritariamente estimados")
+	dop := fs.Float64("dop", repair.DefaultDOP, "DOP declarado nos blocos com medição corrigida")
+	dopEst := fs.Float64("dop-estimado", repair.DefaultDOPEstimated, "DOP declarado nos blocos majoritariamente estimados")
 	keepTimes := fs.Bool("manter-horarios", false, "não regrava o GPSU de blocos com horário inconsistente")
 	keepDate := fs.Bool("manter-data", false, "mantém a data do original (por padrão o arquivo novo recebe nome e data de criação novos)")
 	file, err := parseArgs(fs, args)
@@ -108,79 +112,32 @@ func cmdRepair(args []string) error {
 		return err
 	}
 	if *out == "" {
-		ext := filepath.Ext(file)
-		suffix := "_gps_corrigido"
-		if !*keepDate {
-			suffix += "_" + time.Now().Format("20060102_150405")
-		}
-		*out = strings.TrimSuffix(file, ext) + suffix + ext
-	}
-	if same(file, *out) {
-		return errors.New("a saída não pode ser o próprio arquivo de entrada")
-	}
-	if _, err := os.Stat(*out); err == nil {
-		return fmt.Errorf("%s já existe; apague-o ou use -o", *out)
-	}
-	if *report == "" {
-		*report = strings.TrimSuffix(*out, filepath.Ext(*out)) + ".relatorio.json"
+		*out = repair.OutputName(file, "", *keepDate, time.Now())
 	}
 
-	tr, err := telemetry.Load(file)
-	if err != nil {
-		return err
-	}
-	before := diagnose.Run(tr)
-	res, err := reconstruct.Run(tr)
-	if err != nil {
-		return err
-	}
-	sum, err := writer.Write(tr, res, *out, writer.Options{
-		DOPCorrected: *dop, DOPEstimated: *dopEst, FixTimes: !*keepTimes, KeepDate: *keepDate,
+	r, err := repair.Run(context.Background(), file, repair.Options{
+		Output: *out, Report: *report, GPX: *gpxPath,
+		DOPCorrected: *dop, DOPEstimated: *dopEst,
+		KeepTimes: *keepTimes, KeepDate: *keepDate,
 	})
 	if err != nil {
 		return err
 	}
+	before, after, res, sum := r.Before, r.After, r.Reconstruction, r.Write
 
-	// Relê o arquivo gravado para conferir.
-	tr2, err := telemetry.Load(*out)
-	if err != nil {
-		return fmt.Errorf("arquivo gravado, mas não foi possível relê-lo: %w", err)
-	}
-	after := diagnose.Run(tr2)
-
-	if *gpxPath != "" {
-		name := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file)) + " (GPS reconstruído)"
-		if err := gpx.Write(*gpxPath, name, res.Points); err != nil {
-			return err
-		}
-	}
-	if err := writeJSON(*report, map[string]any{
-		"entrada":       file,
-		"saida":         *out,
-		"antes":         before,
-		"reconstrucao":  res,
-		"gravacao":      sum,
-		"depois":        after,
-		"pontos":        res.Points,
-		"observacao":    "Os valores do GPS foram reconstruídos. Pontos com status 'estimado' não têm medição correspondente.",
-		"dop_declarado": map[string]float64{"corrigido": *dop, "estimado": *dopEst},
-	}); err != nil {
-		return err
-	}
-
-	fmt.Printf("Arquivo reparado: %s\n\n", *out)
+	fmt.Printf("Arquivo reparado: %s\n\n", r.Output)
 	fmt.Printf("Nota do GPS: %d/100 (%s) → %d/100 (%s, pelo que o arquivo declara)\n",
 		before.Score, before.Verdict, after.Score, after.Verdict)
-	total := len(res.Points)
+	total := r.Samples
 	fmt.Printf("Posição:  %d de %d amostras corrigidas, %d estimadas (%d medições rejeitadas como salto)\n",
 		total-res.PosEstimated, total, res.PosEstimated, res.PosRejected)
 	fmt.Printf("Altitude: %d de %d amostras corrigidas, %d estimadas (%d medições rejeitadas)\n",
 		total-res.AltEstimated, total, res.AltEstimated, res.AltRejected)
 	fmt.Printf("Maior correção de posição: %s m · incerteza mediana: %s m\n", num(res.MaxShift, 1), num(res.MedianSigma, 1))
-	if before.Fix2D+before.Fix3D > 0 {
+	if before.Fix2D+before.Fix3D > 0 && r.AltRange != nil && r.OrigAltRange != nil {
 		fmt.Printf("Altitude: faixa %s–%s m (original %s–%s m)\n",
-			num(minAlt(res.Points, true), 0), num(minAlt(res.Points, false), 0),
-			num(rawAlt(tr, true), 0), num(rawAlt(tr, false), 0))
+			num(r.AltRange.Min, 0), num(r.AltRange.Max, 0),
+			num(r.OrigAltRange.Min, 0), num(r.OrigAltRange.Max, 0))
 	}
 	fmt.Printf("Regravados: %d blocos, %d bytes; fix ajustado em %d, DOP em %d, horário em %d\n",
 		sum.Blocks, sum.BytesWritten, sum.FixRaised, sum.DOPChanged, sum.TimesRewritten)
@@ -192,9 +149,9 @@ func cmdRepair(args []string) error {
 	if sum.FixMissing > 0 {
 		fmt.Printf("Atenção: %d blocos sem campo de fix gravado não puderam ser marcados como 3D\n", sum.FixMissing)
 	}
-	fmt.Printf("Relatório: %s\n", *report)
-	if *gpxPath != "" {
-		fmt.Printf("GPX: %s\n", *gpxPath)
+	fmt.Printf("Relatório: %s\n", r.Report)
+	if r.GPX != "" {
+		fmt.Printf("GPX: %s\n", r.GPX)
 	}
 	return nil
 }
@@ -231,40 +188,6 @@ func printReport(r *diagnose.Report, blocks bool) {
 	}
 }
 
-func minAlt(p []reconstruct.Point, min bool) float64 {
-	v := math.Inf(1)
-	if !min {
-		v = math.Inf(-1)
-	}
-	for _, x := range p {
-		if min {
-			v = math.Min(v, x.Alt)
-		} else {
-			v = math.Max(v, x.Alt)
-		}
-	}
-	return v
-}
-
-// rawAlt é a faixa de altitude original, considerando só amostras com fix.
-func rawAlt(tr *telemetry.Track, min bool) float64 {
-	v := math.Inf(1)
-	if !min {
-		v = math.Inf(-1)
-	}
-	for _, s := range tr.Samples {
-		if !s.Valid || tr.Blocks[s.Block].Fix < 2 {
-			continue
-		}
-		if min {
-			v = math.Min(v, s.Alt)
-		} else {
-			v = math.Max(v, s.Alt)
-		}
-	}
-	return v
-}
-
 // num formata com vírgula decimal.
 func num(v float64, prec int) string {
 	if math.IsNaN(v) {
@@ -273,27 +196,8 @@ func num(v float64, prec int) string {
 	return strings.Replace(fmt.Sprintf("%.*f", prec, v), ".", ",", 1)
 }
 
-func same(a, b string) bool {
-	sa, err1 := os.Stat(a)
-	sb, err2 := os.Stat(b)
-	if err1 == nil && err2 == nil {
-		return os.SameFile(sa, sb)
-	}
-	aa, _ := filepath.Abs(a)
-	bb, _ := filepath.Abs(b)
-	return aa == bb
-}
-
 func printJSON(v any) error {
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	return enc.Encode(v)
-}
-
-func writeJSON(path string, v any) error {
-	data, err := json.MarshalIndent(v, "", "  ")
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(path, append(data, '\n'), 0o644)
 }

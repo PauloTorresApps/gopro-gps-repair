@@ -5,6 +5,7 @@
 package writer
 
 import (
+	"context"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -30,7 +31,18 @@ type Options struct {
 	// datas de criação do contêiner MP4. Por padrão o arquivo recebe a data e a
 	// hora atuais, para a nuvem da GoPro não o tomar por duplicata do original.
 	KeepDate bool
+	// Progress, se definido, recebe o andamento das etapas longas (cópia e
+	// verificação), em bytes.
+	Progress func(stage Stage, done, total int64)
 }
+
+// Stage identifica uma etapa longa da gravação.
+type Stage string
+
+const (
+	StageCopy   Stage = "copia"
+	StageVerify Stage = "verificacao"
+)
 
 // mp4Epoch é a origem das datas do contêiner MP4 (1904-01-01 UTC).
 var mp4Epoch = time.Date(1904, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -57,11 +69,18 @@ type Summary struct {
 
 // Write cria out (que não pode existir) a partir de tr.Path.
 func Write(tr *telemetry.Track, res *reconstruct.Result, out string, opt Options) (*Summary, error) {
-	if err := copyFile(tr.Path, out); err != nil {
+	return WriteContext(context.Background(), tr, res, out, opt)
+}
+
+// WriteContext é Write com cancelamento: se ctx for cancelado durante a cópia
+// ou a verificação, o arquivo novo é apagado e o erro é ctx.Err().
+func WriteContext(ctx context.Context, tr *telemetry.Track, res *reconstruct.Result, out string, opt Options) (*Summary, error) {
+	if err := copyFile(ctx, tr.Path, out, opt.Progress); err != nil {
 		return nil, err
 	}
 	f, err := os.OpenFile(out, os.O_RDWR, 0)
 	if err != nil {
+		os.Remove(out)
 		return nil, err
 	}
 	sum := &Summary{}
@@ -154,7 +173,7 @@ func Write(tr *telemetry.Track, res *reconstruct.Result, out string, opt Options
 	// Garantia: fora dos campos de GPS regravados, o arquivo novo tem que ser
 	// idêntico ao original. Se não for, ele é descartado.
 	if err == nil {
-		err = VerifyOnlyPatched(tr.Path, out, sum.Patches)
+		err = verifyOnlyPatched(ctx, tr.Path, out, sum.Patches, opt.Progress)
 	}
 	if err == nil {
 		err = copyFileInfo(tr.Path, out, opt.KeepDate, now)
@@ -218,20 +237,47 @@ func putInt(put func(*telemetry.Field, string, []byte) error, fd *telemetry.Fiel
 	return put(fd, key, data)
 }
 
-func copyFile(src, dst string) error {
+func copyFile(ctx context.Context, src, dst string, progress func(Stage, int64, int64)) error {
 	in, err := os.Open(src)
 	if err != nil {
 		return err
 	}
 	defer in.Close()
+	st, err := in.Stat()
+	if err != nil {
+		return err
+	}
 	out, err := os.OpenFile(dst, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 	if err != nil {
 		return err
 	}
-	if _, err := io.Copy(out, in); err != nil {
+	r := &ctxReader{ctx: ctx, r: in, total: st.Size(), stage: StageCopy, progress: progress}
+	if _, err := io.Copy(out, r); err != nil {
 		out.Close()
 		os.Remove(dst)
 		return err
 	}
 	return out.Close()
+}
+
+// ctxReader interrompe a leitura quando ctx é cancelado e informa o progresso.
+type ctxReader struct {
+	ctx      context.Context
+	r        io.Reader
+	done     int64
+	total    int64
+	stage    Stage
+	progress func(Stage, int64, int64)
+}
+
+func (c *ctxReader) Read(p []byte) (int, error) {
+	if err := c.ctx.Err(); err != nil {
+		return 0, err
+	}
+	n, err := c.r.Read(p)
+	c.done += int64(n)
+	if c.progress != nil {
+		c.progress(c.stage, c.done, c.total)
+	}
+	return n, err
 }

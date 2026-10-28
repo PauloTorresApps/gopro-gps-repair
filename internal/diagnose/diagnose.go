@@ -36,6 +36,30 @@ type BlockReport struct {
 	Quality     float64   `json:"qualidade"` // 0 a 1
 }
 
+// Tipos de problema, usados em Issue.Kind.
+const (
+	IssueNoFix       = "sem_fix"
+	IssueFix2D       = "fix_2d"
+	IssueHighDOP     = "dop_alto"
+	IssueJumps       = "saltos_posicao"
+	IssueAltJumps    = "saltos_altitude"
+	IssueTimeSuspect = "horario_inconsistente"
+)
+
+// Span é um trecho em tempo do vídeo, em segundos.
+type Span struct {
+	Start float64 `json:"inicio_s"`
+	End   float64 `json:"fim_s"`
+}
+
+// Issue é um tipo de problema e os trechos em que ele ocorre. É a forma
+// estruturada de Problems, para programas que exibem o diagnóstico em outros
+// idiomas.
+type Issue struct {
+	Kind  string `json:"tipo"`
+	Spans []Span `json:"trechos"`
+}
+
 // Report é o diagnóstico completo de um arquivo.
 type Report struct {
 	Path        string        `json:"arquivo"`
@@ -58,6 +82,7 @@ type Report struct {
 	Score       int           `json:"nota"`
 	Verdict     string        `json:"veredito"`
 	Problems    []string      `json:"problemas"`
+	Issues      []Issue       `json:"trechos_problema"`
 	BlockList   []BlockReport `json:"lista_blocos"`
 }
 
@@ -163,7 +188,7 @@ func Run(tr *telemetry.Track) *Report {
 	default:
 		r.Verdict = "ruim"
 	}
-	r.Problems = problems(r)
+	r.Problems, r.Issues = problems(r)
 	return r
 }
 
@@ -185,28 +210,35 @@ func sampleQuality(valid bool, fix int, dop float64) float64 {
 	return 0.2
 }
 
-// problems descreve, em texto, os trechos com defeito.
-func problems(r *Report) []string {
+// problems descreve os trechos com defeito, em texto e de forma estruturada.
+func problems(r *Report) ([]string, []Issue) {
 	var out []string
-	add := func(desc string, pred func(BlockReport) bool) {
-		ranges := segments(r.BlockList, pred)
-		if len(ranges) > 0 {
-			out = append(out, fmt.Sprintf("%s: %s", desc, strings.Join(ranges, ", ")))
+	var issues []Issue
+	add := func(kind, desc string, pred func(BlockReport) bool) {
+		spans := segments(r.BlockList, pred)
+		if len(spans) == 0 {
+			return
 		}
+		ranges := make([]string, len(spans))
+		for i, sp := range spans {
+			ranges[i] = strings.ReplaceAll(fmt.Sprintf("%.1f–%.1f s", sp.Start, sp.End), ".", ",")
+		}
+		out = append(out, fmt.Sprintf("%s: %s", desc, strings.Join(ranges, ", ")))
+		issues = append(issues, Issue{Kind: kind, Spans: spans})
 	}
-	add("sem fix", func(b BlockReport) bool { return b.Fix < 2 })
-	add("só fix 2D (altitude não confiável)", func(b BlockReport) bool { return b.Fix == 2 })
-	add(fmt.Sprintf("precisão ruim (DOP > %.0f)", FairDOP), func(b BlockReport) bool { return b.Fix >= 2 && b.DOP > FairDOP })
-	add("saltos de posição", func(b BlockReport) bool { return b.Jumps > 0 })
-	add("saltos de altitude", func(b BlockReport) bool { return b.AltJumps > 0 })
-	add("horário GPS (GPSU) inconsistente", func(b BlockReport) bool { return b.TimeSuspect })
-	return out
+	add(IssueNoFix, "sem fix", func(b BlockReport) bool { return b.Fix < 2 })
+	add(IssueFix2D, "só fix 2D (altitude não confiável)", func(b BlockReport) bool { return b.Fix == 2 })
+	add(IssueHighDOP, fmt.Sprintf("precisão ruim (DOP > %.0f)", FairDOP), func(b BlockReport) bool { return b.Fix >= 2 && b.DOP > FairDOP })
+	add(IssueJumps, "saltos de posição", func(b BlockReport) bool { return b.Jumps > 0 })
+	add(IssueAltJumps, "saltos de altitude", func(b BlockReport) bool { return b.AltJumps > 0 })
+	add(IssueTimeSuspect, "horário GPS (GPSU) inconsistente", func(b BlockReport) bool { return b.TimeSuspect })
+	return out, issues
 }
 
-// segments agrupa blocos consecutivos que satisfazem pred em faixas de tempo
-// do vídeo, como "0,0–2,0 s".
-func segments(blocks []BlockReport, pred func(BlockReport) bool) []string {
-	var out []string
+// segments agrupa blocos consecutivos que satisfazem pred em trechos de tempo
+// do vídeo.
+func segments(blocks []BlockReport, pred func(BlockReport) bool) []Span {
+	var out []Span
 	for i := 0; i < len(blocks); {
 		if !pred(blocks[i]) {
 			i++
@@ -220,7 +252,7 @@ func segments(blocks []BlockReport, pred func(BlockReport) bool) []string {
 		if j+1 < len(blocks) {
 			end = blocks[j+1].VideoTime
 		}
-		out = append(out, strings.ReplaceAll(fmt.Sprintf("%.1f–%.1f s", blocks[i].VideoTime, end), ".", ","))
+		out = append(out, Span{Start: blocks[i].VideoTime, End: end})
 		i = j + 1
 	}
 	return out

@@ -1,0 +1,174 @@
+# Gera os pacotes do app. A versão vem da tag: ao enviar uma tag vX.Y.Z, os
+# pacotes saem com X.Y.Z e são anexados a uma Release do GitHub (rascunho).
+#
+#   make conferir-versao TAG=v0.3.0     # metainfo e AUR já com 0.3.0?
+#   git tag v0.3.0 && git push origin v0.3.0
+#
+# Também roda em pull requests para a main e pode ser disparado à mão (aba
+# Actions, depois que este arquivo estiver na main), só para gerar os artefatos.
+name: Pacotes
+
+on:
+  push:
+    tags: ['v*']
+  # Pull requests para a main: gera todos os pacotes (sem Release) para
+  # testar o build antes do merge.
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  WAILS_VERSION: v3.0.0-beta.16
+  GO_VERSION: '1.25'
+  NODE_VERSION: '22'
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-go@v6
+        with: { go-version: '${{ env.GO_VERSION }}' }
+      - run: go vet ./... && go test ./...
+      - name: Versão da tag no metainfo e no AUR
+        if: github.ref_type == 'tag'
+        run: make conferir-versao TAG="$GITHUB_REF_NAME"
+      # O Go ignora sem erro um -X com caminho de pacote errado; aqui se
+      # confere que a versão chegou ao executável e, em tags, que é a da tag.
+      # -buildvcs=false: sem ele, o Go gravaria a tag por conta própria e
+      # esconderia um -X quebrado (a interface é compilada assim).
+      - name: Versão gravada no executável
+        env: { GOFLAGS: -buildvcs=false }
+        run: |
+          make build
+          calc=$(make -s versao)
+          v=$(bin/gopro-gps-repair versao | awk '{print $2}')
+          echo "versão calculada: $calc; no executável: $v"
+          [ "$v" != dev ] || { echo "::error::o executável não recebeu a versão (o pacote internal/versao mudou de caminho?)"; exit 1; }
+          [ "$v" = "$calc" ] || { echo "::error::o executável tem $v, mas o build calculou $calc"; exit 1; }
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "$v" != "${GITHUB_REF_NAME#v}" ]; then
+            echo "::error::a tag é $GITHUB_REF_NAME, mas o build usou $v"; exit 1
+          fi
+
+  linux:
+    # Ubuntu 24.04 (glibc 2.39): os binários rodam nele e nas distros mais novas.
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-go@v6
+        with: { go-version: '${{ env.GO_VERSION }}', cache-dependency-path: gui/go.sum }
+      - uses: actions/setup-node@v5
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: npm, cache-dependency-path: gui/frontend/package-lock.json }
+      - name: Dependências de sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev pkg-config
+      - run: go install github.com/wailsapp/wails/v3/cmd/wails3@${{ env.WAILS_VERSION }}
+      - name: .deb, .rpm, Arch e AppImage (versão da tag)
+        working-directory: gui
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: '1'
+        run: wails3 task linux:package && ls -la bin
+      - uses: actions/upload-artifact@v7
+        with:
+          name: linux
+          path: |
+            gui/bin/*.deb
+            gui/bin/*.rpm
+            gui/bin/*.pkg.tar.zst
+            gui/bin/*.AppImage
+
+  flatpak:
+    needs: test
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-51
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: gopro-gps-repair.flatpak
+          manifest-path: packaging/flatpak/io.github.PauloTorresApps.gopro_gps_repair.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+
+  snap:
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+      - uses: snapcore/action-build@v1
+        id: snap
+      - uses: actions/upload-artifact@v7
+        with:
+          name: snap
+          path: ${{ steps.snap.outputs.snap }}
+
+  windows:
+    needs: test
+    runs-on: windows-latest
+    defaults:
+      run: { shell: bash }
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-go@v6
+        with: { go-version: '${{ env.GO_VERSION }}', cache-dependency-path: gui/go.sum }
+      - uses: actions/setup-node@v5
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: npm, cache-dependency-path: gui/frontend/package-lock.json }
+      - run: go install github.com/wailsapp/wails/v3/cmd/wails3@${{ env.WAILS_VERSION }}
+      - name: Instalador NSIS
+        working-directory: gui
+        run: |
+          command -v makensis || choco install nsis -y
+          export PATH="$PATH:/c/Program Files (x86)/NSIS"
+          wails3 task windows:package
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows
+          path: |
+            gui/bin/*.exe
+
+  macos:
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-go@v6
+        with: { go-version: '${{ env.GO_VERSION }}', cache-dependency-path: gui/go.sum }
+      - uses: actions/setup-node@v5
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: npm, cache-dependency-path: gui/frontend/package-lock.json }
+      - run: go install github.com/wailsapp/wails/v3/cmd/wails3@${{ env.WAILS_VERSION }}
+      - name: App universal (Intel e Apple Silicon), sem assinatura
+        working-directory: gui
+        run: |
+          wails3 task darwin:package:universal
+          cd bin && ditto -c -k --keepParent gopro-gps-repair-gui.app gopro-gps-repair-gui-macos-universal.zip
+      - uses: actions/upload-artifact@v7
+        with:
+          name: macos
+          path: gui/bin/*.zip
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: [linux, flatpak, snap, windows, macos]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with: { path: dist, merge-multiple: true }
+      - run: ls -la dist
+      - uses: softprops/action-gh-release@v3
+        with:
+          draft: true
+          files: dist/*

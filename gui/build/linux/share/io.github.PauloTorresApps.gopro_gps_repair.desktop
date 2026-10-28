@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Name=GPS Repair for GoPro
+Name[pt_BR]=GPS Repair for GoPro
+GenericName=GPS Telemetry Repair
+GenericName[pt_BR]=Reparo de telemetria GPS
+GenericName[es]=Reparación de telemetría GPS
+GenericName[zh_CN]=GPS 遥测修复
+Comment=Recover degraded GPS in GoPro videos so GoPro Quik can add telemetry gauges
+Comment[pt_BR]=Recupere o GPS degradado de vídeos GoPro para o GoPro Quik adicionar os medidores de telemetria
+Comment[es]=Recupera el GPS degradado de vídeos GoPro para que GoPro Quik pueda añadir los indicadores de telemetría
+Comment[zh_CN]=修复 GoPro 视频中受损的 GPS 数据，让 GoPro Quik 能够添加遥测仪表
+Exec=gopro-gps-repair-gui
+Icon=io.github.PauloTorresApps.gopro_gps_repair
+Terminal=false
+Categories=AudioVideo;Video;AudioVideoEditing;
+Keywords=GoPro;GPS;telemetry;GPMF;Quik;video;repair;
+MimeType=video/mp4;
+StartupNotify=true
+StartupWMClass=io.github.PauloTorresApps.gopro_gps_repair
