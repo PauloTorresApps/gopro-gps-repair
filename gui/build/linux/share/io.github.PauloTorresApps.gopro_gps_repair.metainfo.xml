@@ -43,9 +43,9 @@
     <binary>gopro-gps-repair-gui</binary>
   </provides>
 
-  <url type="homepage">https://github.com/PauloTorresApps/gopro-gps-repair</url>
-  <url type="bugtracker">https://github.com/PauloTorresApps/gopro-gps-repair/issues</url>
-  <url type="vcs-browser">https://github.com/PauloTorresApps/gopro-gps-repair</url>
+  <url type="homepage">https://github.com/PauloTorresApps/gopro_gps_repair</url>
+  <url type="bugtracker">https://github.com/PauloTorresApps/gopro_gps_repair/issues</url>
+  <url type="vcs-browser">https://github.com/PauloTorresApps/gopro_gps_repair</url>
 
   <categories>
     <category>AudioVideo</category>
@@ -63,15 +63,15 @@
   <screenshots>
     <screenshot type="default">
       <caption>GPS assessment before restoring</caption>
-      <image>https://raw.githubusercontent.com/PauloTorresApps/gopro-gps-repair/main/docs/screenshots/assessment.png</image>
+      <image>https://raw.githubusercontent.com/PauloTorresApps/gopro_gps_repair/main/docs/screenshots/assessment.png</image>
     </screenshot>
     <screenshot>
       <caption>Restoration in progress, with an abort button</caption>
-      <image>https://raw.githubusercontent.com/PauloTorresApps/gopro-gps-repair/main/docs/screenshots/progress.png</image>
+      <image>https://raw.githubusercontent.com/PauloTorresApps/gopro_gps_repair/main/docs/screenshots/progress.png</image>
     </screenshot>
     <screenshot>
       <caption>Report of what was restored and how</caption>
-      <image>https://raw.githubusercontent.com/PauloTorresApps/gopro-gps-repair/main/docs/screenshots/report.png</image>
+      <image>https://raw.githubusercontent.com/PauloTorresApps/gopro_gps_repair/main/docs/screenshots/report.png</image>
     </screenshot>
   </screenshots>
 

@@ -22,7 +22,7 @@ description: |-
   app (gopro-gps-repair-gui) and a command-line tool (gopro-gps-repair).
   Not affiliated with GoPro, Inc.
 vendor: "Paulo Roberto Torres"
-homepage: "https://github.com/PauloTorresApps/gopro-gps-repair"
+homepage: "https://github.com/PauloTorresApps/gopro_gps_repair"
 license: "Apache-2.0"
 
 contents:
