@@ -37,6 +37,22 @@ jobs:
       - name: Versão da tag no metainfo e no AUR
         if: github.ref_type == 'tag'
         run: make conferir-versao TAG="$GITHUB_REF_NAME"
+      # O Go ignora sem erro um -X com caminho de pacote errado; aqui se
+      # confere que a versão chegou ao executável e, em tags, que é a da tag.
+      # -buildvcs=false: sem ele, o Go gravaria a tag por conta própria e
+      # esconderia um -X quebrado (a interface é compilada assim).
+      - name: Versão gravada no executável
+        env: { GOFLAGS: -buildvcs=false }
+        run: |
+          make build
+          calc=$(make -s versao)
+          v=$(bin/gopro-gps-repair versao | awk '{print $2}')
+          echo "versão calculada: $calc; no executável: $v"
+          [ "$v" != dev ] || { echo "::error::o executável não recebeu a versão (o pacote internal/versao mudou de caminho?)"; exit 1; }
+          [ "$v" = "$calc" ] || { echo "::error::o executável tem $v, mas o build calculou $calc"; exit 1; }
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "$v" != "${GITHUB_REF_NAME#v}" ]; then
+            echo "::error::a tag é $GITHUB_REF_NAME, mas o build usou $v"; exit 1
+          fi
 
   linux:
     # Ubuntu 24.04 (glibc 2.39): os binários rodam nele e nas distros mais novas.
