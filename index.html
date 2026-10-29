@@ -101,6 +101,16 @@
   .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
   .problems li { margin-bottom: 10px; }
   .problems { padding-left: 0; list-style: none; margin: 0; }
+  .problems li b { color: var(--text); }
+  .problems.cols { columns: 2; column-gap: 40px; }
+  .problems.cols li { break-inside: avoid; }
+  .grid.four { grid-template-columns: repeat(4, 1fr); }
+  .tip { margin: 20px 0 0; padding: 14px 18px; border-radius: 10px; background: rgba(51, 181, 240, .08); border: 1px solid rgba(51, 181, 240, .25); font-size: 15px; }
+  .tip b { color: var(--accent); }
+  .origin { color: var(--muted); font-size: 15px; margin: 16px 0 0; }
+  .limits { margin-top: 16px; }
+  .limits ul { margin: 10px 0 0; padding-left: 20px; color: var(--muted); font-size: 15px; }
+  .limits li { margin-bottom: 6px; }
   .problems li::before { content: "✕"; color: var(--bad); font-weight: 700; margin-right: 10px; }
   .fixes li::before { content: "✓"; color: var(--ok); }
 
@@ -150,8 +160,12 @@
     .hero { padding: 48px 0 40px; }
     .hero .wrap, .two, .step { grid-template-columns: 1fr; gap: 28px; }
     .step:nth-child(even) .shot { order: 0; }
-    .grid { grid-template-columns: 1fr; }
+    .grid, .grid.four { grid-template-columns: 1fr; }
+    .problems.cols { columns: 1; }
     section { padding: 52px 0; }
+  }
+  @media (min-width: 861px) and (max-width: 1040px) {
+    .grid.four { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 520px) {
     .wrap { padding: 0 16px; }
@@ -170,8 +184,8 @@
       <div><b>GPS</b> Repair <span>for GoPro</span></div>
     </a>
     <nav class="links">
-      <a href="#motivacao" data-i18n="nav.why">Motivação</a>
-      <a href="#como-funciona" data-i18n="nav.how">Como funciona</a>
+      <a href="#causas" data-i18n="nav.why">Por que falha</a>
+      <a href="#como-funciona" data-i18n="nav.how">O que o app faz</a>
       <a href="#baixar" data-i18n="nav.download">Baixar</a>
       <a href="https://github.com/PauloTorresApps/gopro_gps_repair">GitHub</a>
     </nav>
@@ -186,14 +200,14 @@
   <div class="hero">
     <div class="wrap">
       <div>
-        <p class="eyebrow" data-i18n="hero.eyebrow">Para vídeos da GoPro com GPS falho</p>
-        <h1 data-i18n="hero.title">O GPS do seu vídeo falhou na trilha? Recupere a telemetria.</h1>
-        <p class="lead" data-i18n="hero.lead">O GPS Repair for GoPro reconstrói os dados de GPS gravados dentro do vídeo para que o GoPro Quik volte a adicionar mapa, velocidade e altitude. O vídeo original nunca é alterado.</p>
+        <p class="eyebrow" data-i18n="hero.eyebrow">Para câmeras GoPro HERO5 a HERO10</p>
+        <h1 data-i18n="hero.title">Recupere o GPS dos seus vídeos GoPro</h1>
+        <p class="lead" data-i18n="hero.lead">Quando o GPS da câmera falha durante a gravação, o GoPro Quik não adiciona os medidores de telemetria (mapa, velocidade, altitude) ou mostra dados errados. Este app corrige os dados de GPS do vídeo e grava uma cópia nova. O arquivo original não é alterado.</p>
         <div class="cta">
           <a class="btn primary" id="hero-dl" href="#baixar" data-i18n="hero.cta">Baixar</a>
           <a class="btn" href="https://github.com/PauloTorresApps/gopro_gps_repair" data-i18n="hero.source">Código-fonte</a>
         </div>
-        <p class="meta" id="hero-meta" data-i18n="hero.meta">Grátis e de código aberto · Windows, macOS e Linux</p>
+        <p class="meta" data-i18n="hero.meta">Grátis e de código aberto · Windows, macOS e Linux</p>
       </div>
       <figure class="track" aria-labelledby="track-cap" style="margin:0">
         <svg viewBox="0 0 420 260" role="img" aria-hidden="true">
@@ -203,7 +217,7 @@
             </pattern>
           </defs>
           <rect width="420" height="260" fill="url(#g)"/>
-          <!-- trilha gravada: falhas, saltos e trechos sem sinal -->
+          <!-- trajeto gravado: saltos e trechos sem sinal (tracejado) -->
           <polyline fill="none" stroke="#ef5b5b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".9"
             points="20,210 40,200 58,196 70,150 78,198 96,186 112,176"/>
           <polyline fill="none" stroke="#ef5b5b" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round" opacity=".7"
@@ -214,112 +228,117 @@
             points="262,98 300,86 330,72"/>
           <polyline fill="none" stroke="#ef5b5b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity=".9"
             points="330,72 352,66 360,110 372,58 400,46"/>
-          <!-- trilha reconstruída -->
+          <!-- trajeto corrigido -->
           <path fill="none" stroke="#33b5f0" stroke-width="3.5" stroke-linecap="round"
             d="M20 214 C60 202, 80 194, 112 180 S170 146, 190 134 S240 108, 264 100 S330 76, 352 68 S390 52, 400 50"/>
           <circle cx="20" cy="214" r="5" fill="#33b5f0"/>
           <circle cx="400" cy="50" r="5" fill="#33b5f0"/>
         </svg>
         <figcaption id="track-cap" class="legend">
-          <span><i style="background:#ef5b5b"></i><span data-i18n="track.bad">GPS gravado: falhas e saltos</span></span>
-          <span><i style="background:#33b5f0"></i><span data-i18n="track.good">GPS reconstruído</span></span>
+          <span><i style="background:#ef5b5b"></i><span data-i18n="track.bad">GPS gravado: saltos e trechos sem sinal</span></span>
+          <span><i style="background:#33b5f0"></i><span data-i18n="track.good">GPS corrigido</span></span>
         </figcaption>
       </figure>
     </div>
   </div>
 
-  <section id="motivacao">
-    <div class="wrap two">
-      <div>
-        <p class="eyebrow" data-i18n="why.eyebrow">Motivação</p>
-        <h2 data-i18n="why.title">Quando as árvores escondem o céu</h2>
+  <section id="causas">
+    <div class="wrap">
+      <p class="eyebrow" data-i18n="why.eyebrow">Causas</p>
+      <h2 data-i18n="why.title">Por que o GPS da GoPro falha</h2>
+      <p class="section-lead" data-i18n="why.lead">O receptor de GPS da GoPro é pequeno, e a antena fica no topo da câmera. O sinal dos satélites já chega fraco, e qualquer coisa entre a antena e o céu piora a recepção. As causas mais comuns:</p>
+      <div class="grid four">
+        <div class="card"><h3 data-i18n="c1.t">Obstáculos</h3><p data-i18n="c1.p">Árvores, prédios, paredões de pedra, pontes e túneis bloqueiam o sinal.</p></div>
+        <div class="card"><h3 data-i18n="c2.t">Reflexos</h3><p data-i18n="c2.p">Perto de prédios, rochas, água ou metal, o sinal chega refletido e a posição calculada sai errada.</p></div>
+        <div class="card"><h3 data-i18n="c3.t">Chuva e céu fechado</h3><p data-i18n="c3.p">Chuva, nuvens carregadas e folhas molhadas enfraquecem ainda mais um sinal que já é fraco.</p></div>
+        <div class="card"><h3 data-i18n="c4.t">Posição da câmera</h3><p data-i18n="c4.p">De cabeça para baixo, de lado ou no peito, a antena fica virada para baixo ou coberta pelo corpo ou pelo capacete.</p></div>
+        <div class="card"><h3 data-i18n="c5.t">Caixas e suportes</h3><p data-i18n="c5.p">Caixas de proteção, frames de metal, Media Mod e acessórios encostados no topo da câmera cobrem a antena.</p></div>
+        <div class="card"><h3 data-i18n="c6.t">Gravação rápida</h3><p data-i18n="c6.p">No QuikCapture, um clique liga a câmera e já começa a gravar, antes de o GPS achar os satélites. O sinal pode levar de segundos a minutos para aparecer.</p></div>
+        <div class="card"><h3 data-i18n="c7.t">Câmera parada há tempo</h3><p data-i18n="c7.p">Depois de semanas desligada, ou levada para longe, a câmera procura os satélites do zero, e o primeiro sinal demora mais.</p></div>
+        <div class="card"><h3 data-i18n="c8.t">Ligar em movimento</h3><p data-i18n="c8.p">Ligada já em movimento e sob árvores, a câmera pode demorar muito para achar o sinal, ou nem achar.</p></div>
       </div>
-      <div class="story">
-        <p data-i18n="why.p1">Em trilhas de mountain bike sob a cobertura das árvores, o GPS de câmeras de ação como a GoPro HERO7 Black perde o sinal com frequência. A câmera continua gravando, mas a telemetria guardada dentro do vídeo fica cheia de buracos, saltos de posição e altitude oscilando.</p>
-        <p data-i18n="why.p2">O resultado é frustrante: o GoPro Quik se recusa a adicionar os medidores de telemetria, e o vídeo da trilha fica sem mapa, sem velocidade e sem altitude.</p>
-        <p data-i18n="why.p3">Este app foi criado para isso: ler o GPS gravado pela câmera, medir os defeitos e reconstruir a trilha, sem perder nenhum outro dado da GoPro.</p>
-        <p class="quote" data-i18n="why.quote">Na prática, depois do reparo, o GoPro Quik conseguiu ler o GPS do arquivo novo e adicionar mapa, velocidade e altitude ao vídeo.</p>
-      </div>
+      <p class="tip" data-i18n="why.tip"><b>Dica:</b> ligue a câmera num lugar aberto e espere o ícone de GPS aparecer na tela antes de começar a gravar.</p>
+      <p class="origin" data-i18n="why.origin">O app nasceu desse problema: vídeos de trilhas de mountain bike sob árvores, gravados com uma HERO7 Black, em que o Quik não aceitava a telemetria.</p>
     </div>
   </section>
 
-  <section id="problema">
+  <section id="efeitos">
     <div class="wrap">
-      <p class="eyebrow" data-i18n="solve.eyebrow">O que ele resolve</p>
-      <h2 data-i18n="solve.title">GPS ruim entra, trilha utilizável sai</h2>
-      <p class="section-lead" data-i18n="solve.lead">A GoPro grava o GPS numa trilha de metadados dentro do próprio MP4. Quando a câmera começa a gravar antes de o GPS estabilizar, ou grava com poucos satélites, essa trilha fica com defeitos como estes:</p>
-      <div class="two">
-        <div class="card">
-          <h3><span class="dot" style="background:var(--bad)"></span><span data-i18n="solve.before">No vídeo gravado</span></h3>
-          <ul class="problems" style="margin-top:14px">
-            <li data-i18n="solve.b1">trechos sem sinal (sem fix)</li>
-            <li data-i18n="solve.b2">fix só 2D, sem altitude confiável</li>
-            <li data-i18n="solve.b3">precisão ruim (DOP alto)</li>
-            <li data-i18n="solve.b4">saltos de posição</li>
-            <li data-i18n="solve.b5">altitude oscilando</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3><span class="dot" style="background:var(--ok)"></span><span data-i18n="solve.after">No vídeo reparado</span></h3>
-          <ul class="problems fixes" style="margin-top:14px">
-            <li data-i18n="solve.a1">lacunas preenchidas por interpolação</li>
-            <li data-i18n="solve.a2">trilha suavizada por filtro de Kalman e suavizador RTS, com posição e velocidade Doppler</li>
-            <li data-i18n="solve.a3">saltos de posição rejeitados</li>
-            <li data-i18n="solve.a4">cada ponto reconstruído marcado como corrigido ou estimado</li>
-            <li data-i18n="solve.a5">GPS que o GoPro Quik aceita</li>
-          </ul>
-        </div>
-      </div>
-      <div class="grid" style="margin-top:16px">
-        <div class="card">
-          <h3 data-i18n="g1.t">O original fica intacto</h3>
-          <p data-i18n="g1.p">O reparo grava um vídeo novo. O arquivo de entrada nunca é alterado.</p>
-        </div>
-        <div class="card">
-          <h3 data-i18n="g2.t">Só o GPS muda</h3>
-          <p data-i18n="g2.p">Vídeo, áudio e todos os outros metadados da GoPro ficam idênticos, conferidos byte a byte. Sem recompressão.</p>
-        </div>
-        <div class="card">
-          <h3 data-i18n="g3.t">Sem promessas falsas</h3>
-          <p data-i18n="g3.p">O relatório diz o que foi restaurado e como. O arquivo não declara uma precisão melhor do que a real.</p>
-        </div>
+      <p class="eyebrow" data-i18n="fx.eyebrow">Efeitos</p>
+      <h2 data-i18n="fx.title">O que a falha causa no vídeo</h2>
+      <p class="section-lead" data-i18n="fx.lead">O GPS com falhas fica gravado dentro do MP4. O problema aparece quando você abre o vídeo no Quik ou em outro programa de telemetria:</p>
+      <div class="card">
+        <ul class="problems cols">
+          <li data-i18n="fx.1"><b>Medidores bloqueados:</b> o Quik não oferece os medidores ou mostra um aviso sobre o GPS (como "GPS Only").</li>
+          <li data-i18n="fx.2"><b>Velocidade errada:</b> picos que não batem com o trajeto, ou velocidade zero com a bicicleta andando.</li>
+          <li data-i18n="fx.3"><b>Saltos de posição:</b> o trajeto no mapa faz zigue-zague e pontas.</li>
+          <li data-i18n="fx.4"><b>Trechos perdidos:</b> linhas retas ligando pontos distantes.</li>
+          <li data-i18n="fx.5"><b>Início sem posição:</b> os primeiros segundos, ou minutos, ficam sem GPS.</li>
+          <li data-i18n="fx.6"><b>Altitude oscilando:</b> subidas e descidas que não existiram.</li>
+          <li data-i18n="fx.7"><b>Distância errada:</b> o total percorrido não confere.</li>
+        </ul>
       </div>
     </div>
   </section>
 
   <section id="como-funciona">
     <div class="wrap">
-      <p class="eyebrow" data-i18n="how.eyebrow">Como funciona</p>
-      <h2 data-i18n="how.title">Três passos, sem linha de comando</h2>
-      <p class="section-lead" data-i18n="how.lead">Escolha o vídeo ou arraste o MP4 para a janela. O app avalia, você decide, e ele mostra o que fez.</p>
+      <p class="eyebrow" data-i18n="how.eyebrow">O que o app faz</p>
+      <h2 data-i18n="how.title">Avalia, corrige e mostra o que fez</h2>
+      <p class="section-lead" data-i18n="how.lead">Escolha o vídeo ou arraste o MP4 para a janela. O app avalia o GPS, você decide se quer corrigir e, no fim, recebe um relatório.</p>
       <div class="steps">
         <div class="step">
           <div>
             <span class="num">1</span>
-            <h3 data-i18n="how.s1t">Avaliação do GPS</h3>
-            <p data-i18n="how.s1p">O app mostra uma nota de 0 a 100, a qualidade segundo a segundo e os números do problema: amostras sem fix, saltos de posição e de altitude. Nada é alterado nessa etapa.</p>
+            <h3 data-i18n="how.s1t">Avalia o GPS</h3>
+            <p data-i18n="how.s1p">Mostra uma nota de 0 a 100, a qualidade segundo a segundo e os problemas encontrados: trechos sem sinal e saltos de posição e de altitude. Nada é alterado nesta etapa.</p>
           </div>
           <div class="shot"><img src="assets/assessment.png" width="1040" height="760" loading="lazy" alt="Tela de avaliação do GPS com nota 83 e barra de qualidade ao longo do vídeo" data-i18n-alt="how.s1alt"></div>
         </div>
         <div class="step">
           <div>
             <span class="num">2</span>
-            <h3 data-i18n="how.s2t">Restauração</h3>
-            <p data-i18n="how.s2p">Se você confirmar, o app reconstrói a trilha e grava um vídeo novo na pasta gopro-gps-repair, dentro da sua pasta pessoal. Dá para abortar a qualquer momento; nesse caso nenhum arquivo fica gravado.</p>
+            <h3 data-i18n="how.s2t">Corrige e grava uma cópia</h3>
+            <p data-i18n="how.s2p">Descarta as posições que saltam, suaviza o trajeto usando a posição e a velocidade medidas pela câmera (filtro de Kalman) e preenche os trechos sem sinal. O vídeo novo vai para a pasta gopro-gps-repair, na sua pasta pessoal. Dá para cancelar a qualquer momento.</p>
           </div>
-          <div class="shot"><img src="assets/progress.png" width="1040" height="760" loading="lazy" alt="Tela de progresso da restauração" data-i18n-alt="how.s2alt"></div>
+          <div class="shot"><img src="assets/progress.png" width="1040" height="760" loading="lazy" alt="Tela de progresso da correção" data-i18n-alt="how.s2alt"></div>
         </div>
         <div class="step">
           <div>
             <span class="num">3</span>
-            <h3 data-i18n="how.s3t">Relatório</h3>
-            <p data-i18n="how.s3p">No fim, um relatório mostra quantas posições e altitudes foram corrigidas ou estimadas, quantas medições foram rejeitadas e quais campos foram regravados. Depois é só abrir o vídeo novo no GoPro Quik.</p>
+            <h3 data-i18n="how.s3t">Mostra o relatório</h3>
+            <p data-i18n="how.s3p">Informa quantas posições e altitudes foram corrigidas (havia medição) ou estimadas (não havia), e quantas medições foram descartadas. Depois, é só abrir o vídeo novo no Quik.</p>
           </div>
-          <div class="shot tall"><img src="assets/report.png" width="1040" height="1300" loading="lazy" alt="Relatório da restauração" data-i18n-alt="how.s3alt"></div>
+          <div class="shot tall"><img src="assets/report.png" width="1040" height="1300" loading="lazy" alt="Relatório da correção" data-i18n-alt="how.s3alt"></div>
         </div>
       </div>
+
+      <div class="grid" style="margin-top:40px">
+        <div class="card">
+          <h3 data-i18n="g1.t">O original não muda</h3>
+          <p data-i18n="g1.p">O app grava um vídeo novo. O arquivo original fica como estava.</p>
+        </div>
+        <div class="card">
+          <h3 data-i18n="g2.t">Só o GPS muda</h3>
+          <p data-i18n="g2.p">Vídeo, áudio e os outros dados da GoPro ficam idênticos. O app confere byte a byte e não recomprime o vídeo.</p>
+        </div>
+        <div class="card">
+          <h3 data-i18n="g3.t">Testado no Quik</h3>
+          <p data-i18n="g3.p">Depois da correção, o Quik leu o GPS do vídeo novo e adicionou mapa, velocidade e altitude.</p>
+        </div>
+      </div>
+
+      <div class="card limits">
+        <h3 data-i18n="lim.t">Limites</h3>
+        <ul>
+          <li data-i18n="lim.1">O app não descobre o caminho real. Em trechos longos sem sinal, ele liga as pontas de forma suave e marca esses pontos como estimados.</li>
+          <li data-i18n="lim.2">Se o GPS estava desligado ou nunca achou satélites, não há o que corrigir.</li>
+          <li data-i18n="lim.3">Para o Quik aceitar o trajeto, o vídeo novo informa sinal 3D e boa precisão. Os valores são reconstruídos, não medidos: guarde o original e o relatório.</li>
+          <li data-i18n="lim.4">Funciona com as câmeras HERO5 a HERO10. A HERO11 e as mais novas ainda não são compatíveis.</li>
+        </ul>
+      </div>
+
       <div class="badges">
-        <span class="badge" data-i18n="badge.cams">Câmeras HERO5 a HERO10 (GPS5)</span>
         <span class="badge" data-i18n="badge.langs">Português, inglês, espanhol e mandarim</span>
         <span class="badge" data-i18n="badge.cli">Também tem linha de comando</span>
         <span class="badge" data-i18n="badge.offline">Funciona sem internet</span>
@@ -455,42 +474,54 @@
   // Textos em inglês. Os textos em português estão no próprio HTML e são
   // guardados na primeira troca de idioma.
   var EN = {
-    "nav.why": "Why", "nav.how": "How it works", "nav.download": "Download",
-    "hero.eyebrow": "For GoPro videos with broken GPS",
-    "hero.title": "Did your video's GPS fail on the trail? Get the telemetry back.",
-    "hero.lead": "GPS Repair for GoPro rebuilds the GPS data stored inside the video so GoPro Quik can add the map, speed and altitude gauges again. The original video is never changed.",
+    "nav.why": "Why it fails", "nav.how": "What the app does", "nav.download": "Download",
+    "hero.eyebrow": "For GoPro HERO5 to HERO10 cameras",
+    "hero.title": "Recover the GPS in your GoPro videos",
+    "hero.lead": "When the camera's GPS fails during recording, GoPro Quik won't add the telemetry gauges (map, speed, altitude) or shows wrong data. This app fixes the GPS data in the video and saves a new copy. The original file is not changed.",
     "hero.cta": "Download", "hero.ctaFor": "Download for {os}", "hero.source": "Source code",
     "hero.meta": "Free and open source · Windows, macOS and Linux",
-    "track.bad": "Recorded GPS: gaps and jumps", "track.good": "Rebuilt GPS",
-    "why.eyebrow": "Why", "why.title": "When the trees hide the sky",
-    "why.p1": "On mountain bike trails under tree cover, the GPS of action cameras such as the GoPro HERO7 Black often loses signal. The camera keeps recording, but the telemetry stored inside the video ends up full of gaps, position jumps and wobbling altitude.",
-    "why.p2": "The result is frustrating: GoPro Quik refuses to add its telemetry gauges, and the trail video ends up with no map, no speed and no altitude.",
-    "why.p3": "This app was built for exactly that: read the GPS recorded by the camera, measure what is wrong and rebuild the track, without losing any other GoPro data.",
-    "why.quote": "In practice, after the repair, GoPro Quik was able to read the GPS from the new file and add the map, speed and altitude to the video.",
-    "solve.eyebrow": "What it solves", "solve.title": "Bad GPS in, usable track out",
-    "solve.lead": "GoPro cameras record GPS in a metadata track inside the MP4 itself. When the camera starts recording before the GPS settles, or records with few satellites, that track ends up with defects like these:",
-    "solve.before": "In the recorded video", "solve.after": "In the repaired video",
-    "solve.b1": "stretches with no signal (no fix)", "solve.b2": "2D-only fix, with no reliable altitude",
-    "solve.b3": "poor precision (high DOP)", "solve.b4": "position jumps", "solve.b5": "wobbling altitude",
-    "solve.a1": "gaps filled by interpolation",
-    "solve.a2": "track smoothed by a Kalman filter and RTS smoother, using position and Doppler speed",
-    "solve.a3": "position jumps rejected", "solve.a4": "each rebuilt point marked as corrected or estimated",
-    "solve.a5": "GPS that GoPro Quik accepts",
-    "g1.t": "The original stays intact", "g1.p": "The repair writes a new video. The input file is never changed.",
-    "g2.t": "Only the GPS changes", "g2.p": "Video, audio and every other GoPro metadata stay identical, checked byte by byte. No re-encoding.",
-    "g3.t": "No false promises", "g3.p": "The report tells what was restored and how. The file never claims better precision than the real one.",
-    "how.eyebrow": "How it works", "how.title": "Three steps, no command line",
-    "how.lead": "Pick the video or drag the MP4 into the window. The app assesses it, you decide, and it shows what it did.",
-    "how.s1t": "GPS assessment",
-    "how.s1p": "The app shows a score from 0 to 100, the quality second by second and the numbers behind the problem: samples with no fix, position and altitude jumps. Nothing is changed at this point.",
+    "track.bad": "Recorded GPS: jumps and gaps", "track.good": "Fixed GPS",
+    "why.eyebrow": "Causes", "why.title": "Why GoPro GPS fails",
+    "why.lead": "The GoPro GPS receiver is small, and its antenna sits on top of the camera. Satellite signals are already weak when they arrive, and anything between the antenna and the sky makes reception worse. The most common causes:",
+    "c1.t": "Obstacles", "c1.p": "Trees, buildings, rock walls, bridges and tunnels block the signal.",
+    "c2.t": "Reflections", "c2.p": "Near buildings, rocks, water or metal, the signal arrives reflected and the computed position is wrong.",
+    "c3.t": "Rain and overcast sky", "c3.p": "Rain, heavy clouds and wet leaves weaken a signal that is already weak.",
+    "c4.t": "Camera position", "c4.p": "Upside down, sideways or on the chest, the antenna points down or is covered by your body or helmet.",
+    "c5.t": "Housings and mounts", "c5.p": "Protective housings, metal frames, the Media Mod and accessories touching the top of the camera cover the antenna.",
+    "c6.t": "Quick recording", "c6.p": "With QuikCapture, one press turns the camera on and starts recording before the GPS finds the satellites. The signal can take seconds to minutes to show up.",
+    "c7.t": "Camera idle for a while", "c7.p": "After weeks switched off, or after travelling far, the camera searches for satellites from scratch, and the first fix takes longer.",
+    "c8.t": "Turning on while moving", "c8.p": "Turned on while already moving and under trees, the camera can take a long time to find the signal, or never find it.",
+    "why.tip": "<b>Tip:</b> turn the camera on in an open spot and wait for the GPS icon on the screen before you start recording.",
+    "why.origin": "The app was born from this problem: mountain bike trail videos under trees, recorded with a HERO7 Black, where Quik would not accept the telemetry.",
+    "fx.eyebrow": "Effects", "fx.title": "What the failure does to the video",
+    "fx.lead": "The faulty GPS is stored inside the MP4. The problem shows up when you open the video in Quik or another telemetry program:",
+    "fx.1": "<b>Gauges blocked:</b> Quik does not offer the gauges or shows a GPS warning (such as \"GPS Only\").",
+    "fx.2": "<b>Wrong speed:</b> spikes that do not match the route, or zero speed while the bike is moving.",
+    "fx.3": "<b>Position jumps:</b> the route on the map zigzags and has spikes.",
+    "fx.4": "<b>Lost stretches:</b> straight lines joining distant points.",
+    "fx.5": "<b>No position at the start:</b> the first seconds, or minutes, have no GPS.",
+    "fx.6": "<b>Wobbling altitude:</b> climbs and descents that never happened.",
+    "fx.7": "<b>Wrong distance:</b> the total distance does not add up.",
+    "how.eyebrow": "What the app does", "how.title": "Assesses, fixes and shows what it did",
+    "how.lead": "Pick the video or drag the MP4 into the window. The app assesses the GPS, you decide whether to fix it and, at the end, you get a report.",
+    "how.s1t": "Assesses the GPS",
+    "how.s1p": "Shows a score from 0 to 100, the quality second by second and the problems found: stretches without signal and position and altitude jumps. Nothing is changed at this step.",
     "how.s1alt": "GPS assessment screen with a score of 83 and a quality bar along the video",
-    "how.s2t": "Restoration",
-    "how.s2p": "If you confirm, the app rebuilds the track and writes a new video to the gopro-gps-repair folder in your home folder. You can abort at any time; if you do, no file is left behind.",
-    "how.s2alt": "Restoration progress screen",
-    "how.s3t": "Report",
-    "how.s3p": "At the end, a report shows how many positions and altitudes were corrected or estimated, how many measurements were rejected and which fields were rewritten. Then just open the new video in GoPro Quik.",
-    "how.s3alt": "Restoration report",
-    "badge.cams": "HERO5 to HERO10 cameras (GPS5)", "badge.langs": "English, Portuguese, Spanish and Chinese",
+    "how.s2t": "Fixes it and saves a copy",
+    "how.s2p": "Discards positions that jump, smooths the route using the position and speed measured by the camera (Kalman filter) and fills the stretches without signal. The new video goes to the gopro-gps-repair folder in your home folder. You can cancel at any time.",
+    "how.s2alt": "Fix progress screen",
+    "how.s3t": "Shows the report",
+    "how.s3p": "Tells how many positions and altitudes were corrected (there was a measurement) or estimated (there was none), and how many measurements were discarded. Then just open the new video in Quik.",
+    "how.s3alt": "Fix report",
+    "g1.t": "The original does not change", "g1.p": "The app saves a new video. The original file stays as it was.",
+    "g2.t": "Only the GPS changes", "g2.p": "Video, audio and the other GoPro data stay identical. The app checks it byte by byte and does not re-encode the video.",
+    "g3.t": "Tested in Quik", "g3.p": "After the fix, Quik read the GPS of the new video and added the map, speed and altitude.",
+    "lim.t": "Limits",
+    "lim.1": "The app does not find the real path. In long stretches without signal, it joins the ends smoothly and marks those points as estimated.",
+    "lim.2": "If the GPS was off or never found satellites, there is nothing to fix.",
+    "lim.3": "For Quik to accept the route, the new video reports a 3D fix and good precision. The values are rebuilt, not measured: keep the original and the report.",
+    "lim.4": "Works with HERO5 to HERO10 cameras. HERO11 and newer are not supported yet.",
+    "badge.langs": "English, Portuguese, Spanish and Chinese",
     "badge.cli": "Command line included", "badge.offline": "Works offline",
     "dl.eyebrow": "Download", "dl.title": "Choose your system",
     "dl.lead": "Every package includes the desktop app and the command line.",
