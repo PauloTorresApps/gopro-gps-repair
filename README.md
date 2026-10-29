@@ -279,7 +279,7 @@ sem vínculo com a GoPro, Inc.). Todos os pacotes trazem a interface
 | Fedora, RHEL 10 e derivados | `.rpm` | `make pacotes` → `gui/bin/` |
 | Arch, Manjaro, EndeavourOS... | `.pkg.tar.zst` e AUR | `make pacotes`; `packaging/aur/PKGBUILD` |
 | qualquer distro | AppImage | `make pacotes` → `gui/bin/` |
-| Flathub (GNOME Software, KDE Discover; Fedora, Mint, Pop!_OS...) | Flatpak | `packaging/flatpak/` (`make flatpak`) |
+| qualquer distro com Flatpak | `.flatpak` | `packaging/flatpak/` (`make flatpak`) |
 | Snap Store (App Center do Ubuntu) | Snap | `snap/snapcraft.yaml` |
 
 `make pacotes` gera os quatro primeiros. O identificador do app
@@ -304,12 +304,10 @@ git tag v0.3.0 && git push origin v0.3.0
 
 O CI repete a conferência e recusa a tag se algo não bater.
 
-- **Flathub:** o Flathub compila sem internet; as dependências Go e npm ficam
-  listadas em `packaging/flatpak/go-sources.json` e `npm-sources.json`. Depois de
-  mudar `gui/go.mod` ou `package-lock.json`, rode `make fontes-flatpak`. Para
-  enviar, siga <https://docs.flathub.org/docs/for-app-authors/submission>,
-  trocando a fonte `dir` do manifesto pela tag do GitHub (há um comentário no
-  arquivo).
+- **Flatpak:** o build do Flatpak roda sem internet; as dependências Go e npm
+  ficam listadas em `packaging/flatpak/go-sources.json` e `npm-sources.json`.
+  Depois de mudar `gui/go.mod` ou `package-lock.json`, rode `make fontes-flatpak`.
+  O workflow anexa o `.flatpak` à Release.
 - **AUR:** depois de criar a tag, rode `updpkgsums` e
   `makepkg --printsrcinfo > .SRCINFO` em `packaging/aur/` e envie os dois
   arquivos ao repositório `gopro-gps-repair` do AUR.
@@ -630,7 +628,7 @@ graphical app (`gopro-gps-repair-gui`) and the command line
 | Fedora, RHEL 10 and derivatives | `.rpm` | `make pacotes` → `gui/bin/` |
 | Arch, Manjaro, EndeavourOS... | `.pkg.tar.zst` and AUR | `make pacotes`; `packaging/aur/PKGBUILD` |
 | any distro | AppImage | `make pacotes` → `gui/bin/` |
-| Flathub (GNOME Software, KDE Discover; Fedora, Mint, Pop!_OS...) | Flatpak | `packaging/flatpak/` (`make flatpak`) |
+| any distro with Flatpak | `.flatpak` | `packaging/flatpak/` (`make flatpak`) |
 | Snap Store (Ubuntu App Center) | Snap | `snap/snapcraft.yaml` |
 
 `make pacotes` builds the first four. The app ID (AppStream,
@@ -655,12 +653,10 @@ git tag v0.3.0 && git push origin v0.3.0
 
 CI runs the same check and rejects the tag if anything does not match.
 
-- **Flathub:** Flathub builds without internet access; the Go and npm
+- **Flatpak:** the Flatpak build runs without internet access; the Go and npm
   dependencies are listed in `packaging/flatpak/go-sources.json` and
   `npm-sources.json`. After changing `gui/go.mod` or `package-lock.json`, run
-  `make fontes-flatpak`. To submit, follow
-  <https://docs.flathub.org/docs/for-app-authors/submission>, replacing the
-  manifest's `dir` source with the GitHub tag (there is a comment in the file).
+  `make fontes-flatpak`. The workflow attaches the `.flatpak` to the Release.
 - **AUR:** after tagging, run `updpkgsums` and `makepkg --printsrcinfo > .SRCINFO`
   in `packaging/aur/` and push both files to the AUR `gopro-gps-repair`
   repository.

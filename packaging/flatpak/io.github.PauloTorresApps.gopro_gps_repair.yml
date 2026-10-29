@@ -1,4 +1,4 @@
-# Manifesto Flatpak (Flathub) do GPS Repair for GoPro.
+# Manifesto Flatpak do GPS Repair for GoPro.
 #
 # Compila a partir do código-fonte, sem internet: os módulos Go e os pacotes
 # npm vêm das listas go-sources.json e npm-sources.json (geradas pelos scripts
@@ -7,12 +7,6 @@
 # Build local, na raiz do repositório:
 #   flatpak-builder --user --install --force-clean build-flatpak \
 #     packaging/flatpak/io.github.PauloTorresApps.gopro_gps_repair.yml
-#
-# No repositório do Flathub, troque a fonte "dir" abaixo por:
-#   - type: git
-#     url: https://github.com/PauloTorresApps/gopro_gps_repair.git
-#     tag: v<versão>
-#     commit: <hash do commit da tag>
 
 id: io.github.PauloTorresApps.gopro_gps_repair
 runtime: org.gnome.Platform

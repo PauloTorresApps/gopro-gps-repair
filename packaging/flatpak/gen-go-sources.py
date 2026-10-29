@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Gera go-sources.json: os módulos Go da interface como fontes do flatpak-builder.
 
-O Flathub compila sem internet. Cada módulo listado em gui/go.sum vira um
+O build do Flatpak roda sem internet. Cada módulo listado em gui/go.sum vira um
 arquivo baixado de proxy.golang.org (com sha256) e colocado num "proxy local"
 (goproxy/), que o manifesto usa com GOPROXY=file://. O go.sum continua
 conferindo cada módulo.

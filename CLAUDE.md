@@ -35,7 +35,7 @@ Use os alvos do `Makefile`:
   atualize à mão o `<releases>` do metainfo e o `pkgver` do AUR
   (`PKGBUILD`/`.SRCINFO`) e rode `make conferir-versao TAG=vX.Y.Z`.
 - Mudou `gui/go.mod` ou `gui/frontend/package-lock.json`? Rode
-  `make fontes-flatpak` (o Flathub compila sem internet).
+  `make fontes-flatpak` (o build do Flatpak roda sem internet).
 - As bindings em `gui/frontend/bindings` são versionadas: o AUR, o Flatpak e o
   Snap compilam sem a CLI do Wails. Regere-as (`make gui`) ao mudar o serviço Go.
 
